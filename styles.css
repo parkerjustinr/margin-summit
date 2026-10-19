@@ -157,16 +157,16 @@ main:focus { outline: none; }
 .seat-status strong { color: var(--fg); font-weight: 600; }
 .seat-switch { display: none; }
 
-/* Below 600px all 600 seats stay in the page, one track block at a time, with cells big enough to tap. */
-@media (max-width: 599px) {
-  .hero { padding-bottom: 40px; }
+@media (max-width: 599px) { .hero { padding-bottom: 40px; } }
+/* Below 1024px all 600 seats stay in the page, one track block at a time, with cells big enough to tap. */
+@media (max-width: 1023px) {
   .seat-switch { display: flex; gap: 8px; margin-bottom: 16px; }
   .seat-switch button {
     appearance: none; min-width: 52px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--fg); border-radius: 0;
     background: transparent; color: var(--fg); font-family: var(--mono); font-size: 0.9375rem; font-weight: 500; text-align: left; cursor: pointer;
   }
   .seat-switch button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
-  .seat-blocks { grid-template-columns: 1fr; }
+  .seat-blocks { grid-template-columns: 1fr; max-width: 360px; }
   .seatmap[data-show="1"] .seat-block:not([data-block="1"]),
   .seatmap[data-show="2"] .seat-block:not([data-block="2"]),
   .seatmap[data-show="3"] .seat-block:not([data-block="3"]) { display: none; }

@@ -35,7 +35,9 @@
 @media (min-width: 768px) {
   :root { --cols: 12; --gap: 24px; --gutter: 32px; --section-pad: 112px; }
 }
-@media (min-width: 960px) { :root { --header-h: 61px; } }
+/* Sticky header height: two rows (brand + nav) from 768px, one row from 960px. Pinned elements sit just below it. */
+@media (min-width: 768px) { :root { --header-h: 100px; } }
+@media (min-width: 960px) { :root { --header-h: 71px; } }
 
 /* Dark fields: same components, flipped tokens. */
 .hero, .sec-sponsors, .sec-register, .site-footer, .notice, .preview {

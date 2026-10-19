@@ -433,6 +433,9 @@ th.is-sel .m-note { color: inherit; }
 }
 
 section[id] { scroll-margin-top: 100px; }
+/* Speaker cards are link targets from the agenda: land below the sticky header. */
+.sp-featured, .sp-card { scroll-margin-top: 124px; }
+@media (min-width: 960px) { .sp-featured, .sp-card { scroll-margin-top: calc(var(--header-h) + 24px); } }
 @media (min-width: 960px) { section[id] { scroll-margin-top: var(--header-h); } }
 
 /* ---------- FAQ: a black field behind the heading column ---------- */

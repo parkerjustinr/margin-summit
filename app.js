@@ -56,6 +56,16 @@
   // ---------- calendar (.ics) ----------
   function icsStamp(d) { return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); }
   function icsText(v) { return String(v || "").replace(/\[PLACEHOLDER\]\s?/g, "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
+  // RFC 5545: lines longer than 75 octets fold onto continuation lines that start with a space.
+  function icsFold(line) {
+    var out = "", len = 0;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line.charAt(i), n = unescape(encodeURIComponent(ch)).length;
+      if (len + n > 75) { out += "\r\n "; len = 1; }
+      out += ch; len += n;
+    }
+    return out;
+  }
   function downloadIcs(days, filename) {
     var loc = [D.meta.venue, D.meta.address].filter(Boolean).join(", ");
     var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Margin//Margin 2027//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
@@ -68,7 +78,7 @@
       });
     });
     lines.push("END:VCALENDAR");
-    var blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+    var blob = new Blob([lines.map(icsFold).join("\r\n")], { type: "text/calendar;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = filename;

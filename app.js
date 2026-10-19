@@ -3,6 +3,24 @@
 (function () {
   "use strict";
 
+  // Motion preference: "off", "on", or null (no choice yet). Applied before anything renders.
+  var MOTION_KEY = "margin-motion";
+  var motionPref = null;
+  try { motionPref = localStorage.getItem(MOTION_KEY); } catch (e) {}
+  if (motionPref !== "on" && motionPref !== "off") motionPref = null;
+  function applyMotion() {
+    var root = document.documentElement, btn = document.getElementById("motion-toggle"), on = motionPref !== "off";
+    root.classList.toggle("motion-off", motionPref === "off");
+    root.classList.toggle("motion-on", motionPref === "on");
+    if (btn) { btn.setAttribute("aria-checked", String(on)); btn.querySelector(".mt-state").textContent = on ? "on" : "off"; }
+  }
+  applyMotion();
+  document.getElementById("motion-toggle").addEventListener("click", function () {
+    motionPref = motionPref === "off" ? "on" : "off";
+    try { localStorage.setItem(MOTION_KEY, motionPref); } catch (e) {}
+    applyMotion();
+  });
+
   var D = null;              // event data
   var state = { tzMode: "event", tier: null };
   var USER_TZ = (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { return ""; } })();

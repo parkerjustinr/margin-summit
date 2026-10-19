@@ -74,7 +74,7 @@
         var t = sessionTimes(day, s);
         lines.push("BEGIN:VEVENT", "UID:" + s.id + "-" + D.meta.year + "@margin-summit", "DTSTAMP:" + icsStamp(new Date()),
           "DTSTART:" + icsStamp(t.start), "DTEND:" + icsStamp(t.end), "SUMMARY:" + icsText(D.meta.name + ": " + s.title),
-          "DESCRIPTION:" + icsText(s.detail), "LOCATION:" + icsText(loc), "END:VEVENT");
+          "DESCRIPTION:" + icsText([s.detail, seatState.mine ? "Your seat: " + seatLabel(seatState.mine) : ""].filter(Boolean).join("\n")), "LOCATION:" + icsText(loc), "END:VEVENT");
       });
     });
     lines.push("END:VCALENDAR");
@@ -92,6 +92,8 @@
     return '<section class="section sec-' + id + (extraClass ? " " + extraClass : "") + '" id="' + id + '" aria-labelledby="' + id + '-title">' +
       '<div class="wrap"><h2 class="section-title" id="' + id + '-title">' + copy(title) + "</h2>" + inner + "</div></section>";
   }
+  // Speaker photos are Unsplash URLs; size and crop are added per use.
+  function photoUrl(p, w, h) { return p.photo + (p.photo.indexOf("?") > -1 ? "&" : "?") + "w=" + w + "&h=" + h; }
   function initials(name) { return name.split(/\s+/).map(function (w) { return w.charAt(0); }).join("").slice(0, 2).toUpperCase(); }
   function speakerSessions() {
     var map = {};
@@ -120,39 +122,126 @@
       }).join("") + "</ul>" : "");
   }
 
-  // ---------- hero moment: one cell per seat ----------
-  // Seats already sold fill in once on load. A demo registration turns one open seat accent.
-  var SEATS = 600, SOLD = 438;
+  // ---------- hero moment: seat map ----------
+  // 600 seats in three blocks of 200, one per track. Sold seats fill in once on load (under 2s).
+  // After the fill a visitor can claim one open seat; it goes on the confirmation and into the .ics.
+  var SEATS = 600, SOLD = 438, PER_BLOCK = 200, BLOCK_COLS = 10, ROWS = 20;
+  var seatState = { ready: false, mine: null, active: null, show: 1 };
+  function seatId(i) { return (Math.floor(i / PER_BLOCK) + 1) + "-" + (i % PER_BLOCK + 1); }
+  function seatLabel(i) { return "Seat " + seatId(i) + ", Track " + pad(Math.floor(i / PER_BLOCK) + 1); }
+  function seatEl(i) { return $("seat-" + seatId(i)); }
+  function seatOpen(i) { var el = seatEl(i); return el && !el.classList.contains("t"); }
+  function seatAria(i) {
+    var el = seatEl(i);
+    el.setAttribute("aria-label", seatLabel(i) + (i === seatState.mine ? ", your seat" : el.classList.contains("t") ? ", taken" : ", open"));
+    el.setAttribute("aria-selected", String(i === seatState.mine));
+  }
   function renderSeats() {
-    var order = [], seed = 20270420, sold = {}, i, html = "";
+    var order = [], seed = 20270420, sold = {}, i, b, html = "";
     for (i = 0; i < SEATS; i++) order.push(i);
     for (i = SEATS - 1; i > 0; i--) { // seeded shuffle, so the same seats are sold on every visit
       seed = (seed * 16807) % 2147483647;
       var j = seed % (i + 1), tmp = order[i]; order[i] = order[j]; order[j] = tmp;
     }
     order.slice(0, SOLD).forEach(function (n, k) { sold[n] = Math.round(k / SOLD * 1400); });
-    for (i = 0; i < SEATS; i++) html += sold[i] != null ? '<i class="t" style="--d:' + sold[i] + 'ms"></i>' : "<i></i>";
-    $("hero-moment").innerHTML = '<div class="seats-wrap"><div class="seats" id="seats">' + html +
-      '<span class="seat-tag" id="seat-tag" hidden>Your seat</span></div></div>';
+    for (b = 0; b < SEATS / PER_BLOCK; b++) {
+      html += '<div class="seat-block" role="group" aria-label="Track ' + pad(b + 1) + '" data-block="' + (b + 1) + '"><p class="seat-label" aria-hidden="true">' + pad(b + 1) + '</p><div class="seat-cells">';
+      for (i = b * PER_BLOCK; i < (b + 1) * PER_BLOCK; i++) {
+        var taken = sold[i] != null;
+        html += '<i role="option" id="seat-' + seatId(i) + '" data-i="' + i + '"' + (taken ? ' class="t" style="--d:' + sold[i] + 'ms" aria-disabled="true"' : "") +
+          ' aria-selected="false" aria-label="' + seatLabel(i) + (taken ? ", taken" : ", open") + '"></i>';
+      }
+      html += "</div></div>";
+    }
+    $("hero-moment").innerHTML = '<div class="seatmap" id="seatmap" data-show="1">' +
+      '<div class="seat-switch" role="group" aria-label="Show seats for track">' + [1, 2, 3].map(function (n) {
+        return '<button type="button" data-block="' + n + '" aria-pressed="' + (n === 1) + '">' + pad(n) + "</button>";
+      }).join("") + "</div>" +
+      '<div class="seat-blocks" id="seats" role="listbox" tabindex="0" aria-label="Seat map, 600 seats in three track blocks. Arrow keys move, Enter claims.">' + html + "</div>" +
+      '<p class="seat-status" id="seat-status">' + copy(D.hero.seatHint || "") + "</p>" +
+      '<p class="sr" id="seat-live" aria-live="polite"></p></div>';
     requestAnimationFrame(function () { requestAnimationFrame(function () { $("seats").classList.add("is-on"); }); });
-    window.addEventListener("resize", placeSeatTag);
+    setTimeout(function () { seatState.ready = true; }, 1800);
+    wireSeats();
   }
-  function markSeat() {
-    var seats = $("seats");
-    if (!seats) return;
-    var open = seats.querySelectorAll("i:not(.t):not(.is-you)");
-    if (!open.length) return;
-    open[Math.floor(Math.random() * open.length)].classList.add("is-you");
-    placeSeatTag();
+  function showBlock(n) {
+    seatState.show = n;
+    $("seatmap").setAttribute("data-show", String(n));
+    Array.prototype.forEach.call(document.querySelectorAll(".seat-switch button"), function (btn) {
+      btn.setAttribute("aria-pressed", String(+btn.getAttribute("data-block") === n));
+    });
   }
-  function placeSeatTag() {
-    var tag = $("seat-tag"), mine = document.querySelectorAll("#seats .is-you");
-    if (!tag || !mine.length) return;
-    var cell = mine[mine.length - 1], flip = cell.offsetLeft > cell.parentNode.clientWidth / 2;
-    tag.hidden = false;
-    tag.classList.toggle("is-flip", flip);
-    tag.style.top = cell.offsetTop + cell.offsetHeight / 2 + "px";
-    tag.style.left = (flip ? cell.offsetLeft - 6 : cell.offsetLeft + cell.offsetWidth + 6) + "px";
+  function setActive(i) {
+    var prev = seatState.active != null ? seatEl(seatState.active) : null;
+    if (prev) prev.classList.remove("is-active");
+    seatState.active = i;
+    seatEl(i).classList.add("is-active");
+    $("seats").setAttribute("aria-activedescendant", "seat-" + seatId(i));
+    showBlock(Math.floor(i / PER_BLOCK) + 1);
+  }
+  function claimSeat(i, assigned) {
+    if (!seatOpen(i)) { $("seat-live").textContent = seatLabel(i) + " is taken."; return; }
+    var prev = seatState.mine;
+    seatState.mine = i;
+    if (prev != null) { seatEl(prev).classList.remove("is-you"); seatAria(prev); }
+    seatEl(i).classList.add("is-you");
+    seatAria(i);
+    $("seat-status").innerHTML = "<strong>" + esc(seatLabel(i)) + "</strong>";
+    if (!assigned) $("seat-live").textContent = seatLabel(i) + " claimed.";
+  }
+  function randomOpenSeat() {
+    var open = [];
+    for (var i = 0; i < SEATS; i++) if (seatOpen(i)) open.push(i);
+    return open.length ? open[Math.floor(Math.random() * open.length)] : null;
+  }
+  // The claimed seat counts as sold once its registration is done, so the next person picks fresh.
+  function releaseSeatToSold() {
+    var i = seatState.mine;
+    if (i == null) return;
+    seatState.mine = null;
+    var el = seatEl(i);
+    el.classList.remove("is-you");
+    el.classList.add("t");
+    el.setAttribute("aria-disabled", "true");
+    seatAria(i);
+    $("seat-status").innerHTML = copy(D.hero.seatHint || "");
+  }
+  function wireSeats() {
+    var grid = $("seats");
+    grid.addEventListener("click", function (e) {
+      var cell = e.target.closest("i[data-i]");
+      if (!cell || !seatState.ready) return;
+      var i = +cell.getAttribute("data-i");
+      setActive(i);
+      claimSeat(i, false);
+    });
+    grid.addEventListener("focus", function () {
+      if (seatState.active != null) return;
+      var start = seatState.mine != null ? seatState.mine : (seatState.show - 1) * PER_BLOCK;
+      setActive(start);
+    });
+    grid.addEventListener("keydown", function (e) {
+      var i = seatState.active == null ? 0 : seatState.active;
+      var b = Math.floor(i / PER_BLOCK), local = i % PER_BLOCK, row = Math.floor(local / BLOCK_COLS), col = b * BLOCK_COLS + local % BLOCK_COLS;
+      var totalCols = BLOCK_COLS * SEATS / PER_BLOCK;
+      if (e.key === "ArrowRight") col = Math.min(totalCols - 1, col + 1);
+      else if (e.key === "ArrowLeft") col = Math.max(0, col - 1);
+      else if (e.key === "ArrowDown") row = Math.min(ROWS - 1, row + 1);
+      else if (e.key === "ArrowUp") row = Math.max(0, row - 1);
+      else if (e.key === "Home") col = b * BLOCK_COLS;
+      else if (e.key === "End") col = b * BLOCK_COLS + BLOCK_COLS - 1;
+      else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (seatState.ready) claimSeat(i, false);
+        return;
+      } else return;
+      e.preventDefault();
+      var nb = Math.floor(col / BLOCK_COLS);
+      setActive(nb * PER_BLOCK + row * BLOCK_COLS + col % BLOCK_COLS);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".seat-switch button"), function (btn) {
+      btn.addEventListener("click", function () { showBlock(+btn.getAttribute("data-block")); });
+    });
   }
 
   // ---------- sections ----------
@@ -167,27 +256,24 @@
 
   R.speakers = function () {
     var sp = D.speakers, map = speakerSessions();
-    function sessionLinks(id) {
-      var list = map[id] || [];
-      if (!list.length) return "";
-      return '<ul class="sp-sessions" aria-label="Sessions">' + list.map(function (x) {
-        var t = sessionTimes(x.day, x.s);
-        return '<li><a href="#session-' + x.s.id + '"><span class="t" data-start="' + x.day.id + "|" + x.s.id + '">' + esc(x.day.label) + ", " + esc(fmtTime(t.start)) + "</span> " + esc(x.s.title) + "</a></li>";
-      }).join("") + "</ul>";
+    // Times and titles live in the agenda only; each card links to the speaker's first session.
+    function agendaLink(p) {
+      var list = map[p.id] || [];
+      return list.length ? '<a class="btn btn-small sp-agenda" href="#session-' + list[0].s.id + '" aria-label="See ' + esc(p.name) + ' in the agenda">See in agenda</a>' : "";
     }
-    function photo(p, cls) {
+    function photo(p, cls, w, h) {
       return p.photo
-        ? '<img class="' + cls + '" src="' + esc(p.photo) + '" alt="' + esc(p.name) + '" loading="lazy">'
+        ? '<img class="' + cls + '" src="' + esc(photoUrl(p, w, h)) + '" alt="' + esc(p.name) + '" width="' + w + '" height="' + h + '" loading="lazy">'
         : '<div class="' + cls + ' sp-initials" aria-hidden="true">' + esc(initials(p.name)) + "</div>";
     }
     var first = sp.items[0], rest = sp.items.slice(1);
-    var featured = first ? '<article class="sp-featured" id="speaker-' + first.id + '">' + photo(first, "sp-photo") +
+    var featured = first ? '<article class="sp-featured" id="speaker-' + first.id + '">' + photo(first, "sp-photo", 1200, 900) +
       '<div class="sp-body"><h3 class="sp-name">' + esc(first.name) + '</h3><p class="sp-role">' + esc(first.role) + "</p>" +
-      '<p class="sp-bio">' + copy(first.bio) + "</p>" + sessionLinks(first.id) + "</div></article>" : "";
+      (first.bio ? '<p class="sp-bio">' + copy(first.bio) + "</p>" : "") + agendaLink(first) + "</div></article>" : "";
     var grid = '<ul class="sp-grid">' + rest.map(function (p) {
-      return '<li class="sp-card" id="speaker-' + p.id + '">' + (p.photo ? photo(p, "sp-photo") : "") +
+      return '<li class="sp-card" id="speaker-' + p.id + '">' + photo(p, "sp-photo", 600, 600) +
         '<h3 class="sp-name">' + (p.link ? '<a href="' + esc(p.link) + '">' + esc(p.name) + "</a>" : esc(p.name)) + "</h3>" +
-        '<p class="sp-role">' + esc(p.role) + "</p>" + sessionLinks(p.id) + "</li>";
+        '<p class="sp-role">' + esc(p.role) + "</p>" + (p.bio ? '<p class="sp-bio">' + copy(p.bio) + "</p>" : "") + agendaLink(p) + "</li>";
     }).join("") + "</ul>";
     return sectionShell("speakers", sp.heading, (sp.intro ? '<p class="lede">' + copy(sp.intro) + "</p>" : "") + featured + grid);
   };
@@ -217,7 +303,11 @@
         : '<div class="day-panel" role="tabpanel" id="panel-' + day.id + '" aria-labelledby="tab-' + day.id + '"' + (i ? " hidden" : "") + ' tabindex="0">') +
         '<ol class="sessions">' + sorted.map(function (x) {
           var t = sessionTimes(day, x), tr = byId(D.tracks, x.track);
-          // Featured speakers link to their card; guests show name and company only.
+          // Featured speakers get a photo and link to their card; guests show name and company only.
+          var faces = (x.speakers || []).map(function (id) {
+            var p = byId(D.speakers.items, id);
+            return p && p.photo ? '<a class="s-face" href="#speaker-' + id + '" tabindex="-1"><img src="' + esc(photoUrl(p, 64, 64)) + '" alt="' + esc(p.name) + '" width="32" height="32" loading="lazy"></a>' : "";
+          }).join("");
           var spk = (x.speakers || []).map(function (id) {
             var p = byId(D.speakers.items, id);
             return p ? '<span class="s-person"><a href="#speaker-' + id + '">' + esc(p.name) + "</a></span>" : "";
@@ -231,7 +321,7 @@
             '<p class="s-meta"><span class="s-time"><time datetime="' + t.start.toISOString() + '">' + esc(t.label) + "</time></span>" +
               (tr ? '<span class="s-track"><span class="tn">' + pad(k) + '</span> <span class="s-track-name">' + esc(tr.name) + "</span></span>" : "") + "</p>" +
             '<div class="s-body"><h3 class="s-title">' + esc(x.title) + "</h3>" +
-              (spk ? '<p class="s-speakers">' + spk + "</p>" : "") +
+              (spk ? '<div class="s-speakers">' + (faces ? '<span class="s-faces">' + faces + "</span>" : "") + '<p class="s-names">' + spk + "</p></div>" : "") +
               (x.detail ? '<p class="s-detail">' + copy(x.detail) + "</p>" : "") + "</div>" +
           "</li>";
         }).join("") + "</ol>" +
@@ -451,20 +541,23 @@
   }
 
   function confirm(rec) {
-    var r = D.registration, days = daysForTier(rec.tier.id);
+    var r = D.registration, days = daysForTier(rec.tier.id), assigned = false;
+    if (seatState.mine == null) { var pick = randomOpenSeat(); if (pick != null) { claimSeat(pick, true); assigned = true; } }
     $("reg-out").innerHTML =
       '<div class="confirm" role="status" tabindex="-1" id="reg-confirm">' +
         '<h3>You\'re registered.</h3>' +
         '<dl class="confirm-dl"><dt>Name</dt><dd>' + esc(rec.name) + "</dd><dt>Email</dt><dd>" + esc(rec.email) +
-        "</dd><dt>Ticket</dt><dd>" + esc(rec.tier.name) + ", " + esc(rec.tier.price) + "</dd></dl>" +
+        "</dd><dt>Ticket</dt><dd>" + esc(rec.tier.name) + ", " + esc(rec.tier.price) + "</dd>" +
+        (seatState.mine != null ? "<dt>Seat</dt><dd>" + esc(seatLabel(seatState.mine)) + "</dd>" : "") + "</dl>" +
+        (assigned ? '<p class="seat-note">' + copy(r.seatAssigned) + "</p>" : "") +
         "<p>" + copy(r.confirmation) + "</p>" +
         '<div class="confirm-actions">' + days.map(function (d) {
           return '<button type="button" class="btn btn-small" data-ics-day="' + d.id + '" data-ics-tier="' + rec.tier.id + '">Add ' + esc(d.label) + " to calendar</button>";
         }).join("") + '<button type="button" class="btn btn-small" id="reg-again">Register someone else</button></div>' +
       "</div>";
     $("reg-confirm").focus();
-    markSeat();
     $("reg-again").addEventListener("click", function () {
+      releaseSeatToSold();
       var sec = $("register");
       sec.outerHTML = R.register();
       wireForm();

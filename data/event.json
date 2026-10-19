@@ -16,8 +16,8 @@
     "footerLine": "Margin is a fictional event. Site concept and design by Justin Parker."
   },
   "sections": [
-    {"id": "schedule", "label": "Agenda", "on": true},
     {"id": "speakers", "label": "Speakers", "on": true},
+    {"id": "schedule", "label": "Agenda", "on": true},
     {"id": "sponsors", "label": "Sponsors", "on": true},
     {"id": "venue", "label": "Venue", "on": true},
     {"id": "tickets", "label": "Passes", "on": true},
@@ -30,7 +30,8 @@
     "sub": "Margin is a two-day summit for the directors and VPs who run operations.",
     "primaryCta": {"label": "Register", "href": "#tickets"},
     "secondaryCta": {"label": "See the agenda", "href": "#schedule"},
-    "facts": [{"value": "600", "label": "Operations leaders"}, {"value": "3", "label": "Tracks"}]
+    "facts": [{"value": "600", "label": "Operations leaders"}, {"value": "3", "label": "Tracks"}],
+    "seatHint": "Pick an open seat to claim it."
   },
   "about": {
     "heading": "About",
@@ -45,13 +46,13 @@
     "heading": "Speakers",
     "intro": "",
     "items": [
-      {"id": "sp1", "name": "Renata Okafor", "role": "COO, Halverd Freight", "bio": "Runs 40 cross-dock sites across the Midwest.", "photo": "", "link": ""},
-      {"id": "sp2", "name": "Tomas Lindqvist", "role": "VP Operations, Northpine Foods", "bio": "", "photo": "", "link": ""},
-      {"id": "sp3", "name": "Priya Raman", "role": "Director of Planning, Corvel Supply", "bio": "", "photo": "", "link": ""},
-      {"id": "sp4", "name": "Dana Whitcombe", "role": "Head of People Operations, Tallis Health", "bio": "", "photo": "", "link": ""},
-      {"id": "sp5", "name": "Marcus Bell", "role": "VP Fulfillment, Larkspur Home", "bio": "", "photo": "", "link": ""},
-      {"id": "sp6", "name": "Hana Sato", "role": "Chief Data Officer, Odessen Logistics", "bio": "", "photo": "", "link": ""},
-      {"id": "sp7", "name": "Joel Ferreira", "role": "Plant Director, Ferrow Manufacturing", "bio": "", "photo": "", "link": ""}
+      {"id": "sp1", "name": "Renata Okafor", "role": "COO, Halverd Freight", "bio": "Runs 40 cross-dock sites across the Midwest.", "photo": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&crop=faces&q=70", "link": ""},
+      {"id": "sp2", "name": "Tomas Lindqvist", "role": "VP Operations, Northpine Foods", "bio": "Runs six food plants and the fleet between them.", "photo": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&crop=faces&q=70", "link": ""},
+      {"id": "sp3", "name": "Priya Raman", "role": "Director of Planning, Corvel Supply", "bio": "Plans inventory for 14,000 medical SKUs.", "photo": "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&crop=faces&q=70", "link": ""},
+      {"id": "sp4", "name": "Dana Whitcombe", "role": "Head of People Operations, Tallis Health", "bio": "Staffs round-the-clock teams across 30 clinics.", "photo": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&crop=faces&q=70", "link": ""},
+      {"id": "sp5", "name": "Marcus Bell", "role": "VP Fulfillment, Larkspur Home", "bio": "Ships 80,000 orders a day at peak.", "photo": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&crop=faces&q=70", "link": ""},
+      {"id": "sp6", "name": "Hana Sato", "role": "Chief Data Officer, Odessen Logistics", "bio": "Leads data for a 900-truck fleet.", "photo": "https://images.unsplash.com/photo-1614644147724-2d4785d69962?auto=format&fit=crop&crop=faces&q=70", "link": ""},
+      {"id": "sp7", "name": "Joel Ferreira", "role": "Plant Director, Ferrow Manufacturing", "bio": "Runs a 400-person plant on three shifts.", "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&crop=faces&q=70", "link": ""}
     ]
   },
   "schedule": {
@@ -153,7 +154,8 @@
     "intro": "",
     "demoNotice": "Demo form. Nothing is sent anywhere.",
     "extraFields": [{"id": "org", "label": "Company", "type": "text", "required": false}, {"id": "access", "label": "Access or dietary needs", "type": "textarea", "required": false}],
-    "confirmation": "A receipt is on its way. Bring photo ID to check-in."
+    "confirmation": "A receipt is on its way. Bring photo ID to check-in.",
+    "seatAssigned": "You didn't pick a seat, so we assigned this one at random."
   },
   "faq": {
     "heading": "FAQ",

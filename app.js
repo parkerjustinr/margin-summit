@@ -58,11 +58,11 @@
   function icsText(v) { return String(v || "").replace(/\[PLACEHOLDER\]\s?/g, "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
   function downloadIcs(days, filename) {
     var loc = [D.meta.venue, D.meta.address].filter(Boolean).join(", ");
-    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Event Kit//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Margin//Margin 2027//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
     days.forEach(function (day) {
       day.sessions.forEach(function (s) {
         var t = sessionTimes(day, s);
-        lines.push("BEGIN:VEVENT", "UID:" + s.id + "-" + D.meta.year + "@event-kit", "DTSTAMP:" + icsStamp(new Date()),
+        lines.push("BEGIN:VEVENT", "UID:" + s.id + "-" + D.meta.year + "@margin-summit", "DTSTAMP:" + icsStamp(new Date()),
           "DTSTART:" + icsStamp(t.start), "DTEND:" + icsStamp(t.end), "SUMMARY:" + icsText(D.meta.name + ": " + s.title),
           "DESCRIPTION:" + icsText(s.detail), "LOCATION:" + icsText(loc), "END:VEVENT");
       });
@@ -175,7 +175,7 @@
       '<div class="sp-body"><h3 class="sp-name">' + esc(first.name) + '</h3><p class="sp-role">' + esc(first.role) + "</p>" +
       '<p class="sp-bio">' + copy(first.bio) + "</p>" + sessionLinks(first.id) + "</div></article>" : "";
     var grid = '<ul class="sp-grid">' + rest.map(function (p) {
-      return '<li class="sp-card" id="speaker-' + p.id + '">' + photo(p, "sp-photo") +
+      return '<li class="sp-card" id="speaker-' + p.id + '">' + (p.photo ? photo(p, "sp-photo") : "") +
         '<h3 class="sp-name">' + (p.link ? '<a href="' + esc(p.link) + '">' + esc(p.name) + "</a>" : esc(p.name)) + "</h3>" +
         '<p class="sp-role">' + esc(p.role) + "</p>" + sessionLinks(p.id) + "</li>";
     }).join("") + "</ul>";
@@ -442,7 +442,7 @@
     var r = D.registration, days = daysForTier(rec.tier.id);
     $("reg-out").innerHTML =
       '<div class="confirm" role="status" tabindex="-1" id="reg-confirm">' +
-        '<p class="confirm-kicker">Demo confirmation</p><h3>You\'re registered.</h3>' +
+        '<h3>You\'re registered.</h3>' +
         '<dl class="confirm-dl"><dt>Name</dt><dd>' + esc(rec.name) + "</dd><dt>Email</dt><dd>" + esc(rec.email) +
         "</dd><dt>Ticket</dt><dd>" + esc(rec.tier.name) + ", " + esc(rec.tier.price) + "</dd></dl>" +
         "<p>" + copy(r.confirmation) + "</p>" +

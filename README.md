@@ -1,6 +1,6 @@
-# Event site
+# Margin
 
-One-page event site. Plain HTML, CSS and vanilla JS, no build step. All content lives in `data/event.json`.
+Site for Margin, a fictional operations leadership summit in Chicago. One-page event site. Plain HTML, CSS and vanilla JS, no build step. All content lives in `data/event.json`.
 
 ## Run locally
 The page loads its content with `fetch`, so serve the folder instead of opening the file:

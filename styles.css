@@ -160,8 +160,8 @@ main:focus { outline: none; }
 .seat-switch { display: none; }
 
 @media (max-width: 599px) { .hero { padding-bottom: 40px; } }
-/* Below 1024px all 600 seats stay in the page, one track block at a time, with cells big enough to tap. */
-@media (max-width: 1023px) {
+/* Below 1024px, or on any touchscreen, all 600 seats stay in the page, one track block at a time, with cells big enough to tap. */
+@media (max-width: 1023px), (pointer: coarse) {
   .seat-switch { display: flex; gap: 8px; margin-bottom: 16px; }
   .seat-switch button {
     appearance: none; min-width: 52px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--fg); border-radius: 0;
@@ -195,6 +195,11 @@ main:focus { outline: none; }
   .hero-facts li:first-child { grid-column: span 4; }
   .hero-facts li + li { grid-column: span 2; }
   .seatmap { grid-column: 7 / -1; grid-row: 2 / span 5; margin-top: 0; align-self: start; }
+}
+/* Wide touchscreens show one tall block: its extra height goes to an empty last row, not between the text rows. */
+@media (min-width: 1024px) and (pointer: coarse) {
+  .hero { grid-template-rows: repeat(6, auto) 1fr; }
+  .seatmap { grid-row: 2 / -1; }
 }
 
 /* ---------- sections: heading left (4 cols), content right (8 cols) ---------- */

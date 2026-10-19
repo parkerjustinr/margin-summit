@@ -19,7 +19,7 @@ One-page event site. Plain HTML, CSS, vanilla JS. No framework, no build step. D
 - Schedule day tabs (arrow keys work), tracks as side-by-side columns on desktop, "show my time" toggle (Intl API), per-day .ics download.
 - Ticket breakdown matrix: pick a column to choose a ticket, hover or focus a row for a side preview on desktop, tap a row to open it inline on phones. No sideways scroll on phones. Cost-per-day row is computed.
 - Demo registration with validation and a confirmation state. Nothing is sent anywhere.
-- Skip link, visible focus, reduced-motion support. Header "Motion on / off" switch (saved in localStorage): off stops all animation; the seat fill plays for everyone unless it is off; other motion follows the device setting unless it is switched on.
+- Skip link, visible focus, reduced-motion support.
 
 ## Rules
 - No em dashes anywhere, in code comments or copy. Use a hyphen.

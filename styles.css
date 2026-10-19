@@ -46,15 +46,13 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-/* Motion. The seat-grid fill (under 2s, once, no flashing) plays for everyone unless the visitor
-   turns motion off. Everything else follows prefers-reduced-motion unless the visitor turns motion on. */
+/* Motion follows prefers-reduced-motion, except the seat-grid fill: it plays once for everyone
+   (about 1.7s, no looping, each cell changes once, nothing flashes). */
 @media (prefers-reduced-motion: reduce) {
-  html:not(.motion-on) { scroll-behavior: auto; }
-  html:not(.motion-on) *, html:not(.motion-on) *::before, html:not(.motion-on) *::after { animation: none !important; transition: none !important; }
-  html:not(.motion-off) .seats i:not(.is-you) { transition: background-color 320ms ease var(--d, 0ms) !important; }
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .seats i:not(.is-you) { transition: background-color 320ms ease var(--d, 0ms) !important; }
 }
-html.motion-off { scroll-behavior: auto; }
-html.motion-off *, html.motion-off *::before, html.motion-off *::after { animation: none !important; transition: none !important; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 1.0625rem; line-height: 1.5; overflow-x: hidden; text-align: left; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
@@ -85,20 +83,13 @@ main:focus { outline: none; }
 /* ---------- header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: var(--line);
-  display: grid; grid-template-columns: 1fr auto auto; grid-template-areas: "brand motion cta" "nav nav nav";
+  display: grid; grid-template-columns: 1fr auto; grid-template-areas: "brand cta" "nav nav";
   gap: 6px var(--gap); align-items: center; padding: 10px var(--gutter) 0;
 }
 .brand { grid-area: brand; display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand-mark { display: inline-grid; place-items: end start; width: 32px; height: 32px; padding: 3px 5px; background: var(--fg); color: var(--bg); font-weight: 700; font-size: 0.9rem; line-height: 1; }
 .brand-name { font-weight: 700; font-size: 1.125rem; letter-spacing: -0.02em; }
 .header-cta { grid-area: cta; }
-.motion-toggle {
-  grid-area: motion; appearance: none; min-height: 40px; padding: 6px 10px; border: 1px solid var(--fg); border-radius: 0;
-  background: transparent; color: var(--fg); font: inherit; font-size: 0.875rem; font-weight: 500; white-space: nowrap; cursor: pointer;
-  transition: background-color 120ms ease, color 120ms ease;
-}
-.motion-toggle:hover { background: var(--fg); color: var(--bg); }
-.motion-toggle .mt-state { font-weight: 700; }
 .site-header nav { grid-area: nav; margin: 0 calc(var(--gutter) * -1); }
 .nav-list { display: flex; gap: 2px; overflow-x: auto; padding: 0 var(--gutter) 6px; scrollbar-width: none; }
 .nav-list::-webkit-scrollbar { display: none; }
@@ -110,8 +101,7 @@ main:focus { outline: none; }
     padding: 12px max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
   }
   .brand { grid-column: 1 / 4; }
-  .site-header nav { grid-column: 4 / 9; margin: 0; }
-  .motion-toggle { grid-column: 9 / 11; justify-self: end; }
+  .site-header nav { grid-column: 4 / 11; margin: 0; }
   .header-cta { grid-column: 11 / -1; justify-self: end; }
   .nav-list { padding: 0; overflow: visible; }
 }

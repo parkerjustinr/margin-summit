@@ -97,7 +97,7 @@
   function renderHero() {
     var h = D.hero, m = D.meta;
     $("hero").innerHTML =
-      '<p class="hero-date">' + esc(m.dates) + "</p>" +
+      '<p class="hero-date">' + m.dates.split(" - ").map(function (part) { return '<span class="nw">' + esc(part) + "</span>"; }).join(" - ") + "</p>" +
       '<p class="hero-place">' + esc(m.venue) + ", " + esc(m.city) + "</p>" +
       '<h1 id="hero-title">' + h.title.map(function (l) { return "<span>" + esc(l) + "</span>"; }).join("") + "</h1>" +
       '<p class="hero-sub">' + copy(h.sub) + "</p>" +
@@ -207,16 +207,19 @@
         : '<div class="day-panel" role="tabpanel" id="panel-' + day.id + '" aria-labelledby="tab-' + day.id + '"' + (i ? " hidden" : "") + ' tabindex="0">') +
         '<ol class="sessions">' + sorted.map(function (x) {
           var t = sessionTimes(day, x), tr = byId(D.tracks, x.track);
+          // Featured speakers link to their card; guests show name and company only.
           var spk = (x.speakers || []).map(function (id) {
             var p = byId(D.speakers.items, id);
-            return p ? '<a href="#speaker-' + id + '">' + esc(p.name) + "</a>" : "";
-          }).filter(Boolean).join(", ");
+            return p ? '<span class="s-person"><a href="#speaker-' + id + '">' + esc(p.name) + "</a></span>" : "";
+          }).concat((x.guests || []).map(function (g) {
+            return '<span class="s-person">' + esc(g.name) + ', <span class="s-co">' + esc(g.company) + "</span></span>";
+          })).filter(Boolean).join("");
           var k = trackIndex(x.track);
           var span = slots.filter(function (v) { return v >= x.start && v < x.end; }).length || 1;
           return '<li class="session track-' + k + (k ? "" : spk ? " is-plenary" : " is-break") + '" id="session-' + x.id +
             '" style="--row:' + (slots.indexOf(x.start) + 1) + ";--span:" + span + '">' +
             '<p class="s-meta"><span class="s-time"><time datetime="' + t.start.toISOString() + '">' + esc(t.label) + "</time></span>" +
-              (tr ? '<span class="s-track"><span class="tn">' + pad(k) + "</span> " + esc(tr.name) + "</span>" : "") + "</p>" +
+              (tr ? '<span class="s-track"><span class="tn">' + pad(k) + '</span> <span class="s-track-name">' + esc(tr.name) + "</span></span>" : "") + "</p>" +
             '<div class="s-body"><h3 class="s-title">' + esc(x.title) + "</h3>" +
               (spk ? '<p class="s-speakers">' + spk + "</p>" : "") +
               (x.detail ? '<p class="s-detail">' + copy(x.detail) + "</p>" : "") + "</div>" +
@@ -263,7 +266,6 @@
     var head = '<thead><tr><td class="m-corner"></td>' + t.tiers.map(function (tier) {
       return '<th scope="col" class="m-col c-' + tier.id + (tier.id === t.recommended ? " is-rec" : "") + '"><label class="m-pick">' +
         '<input type="radio" name="tier" value="' + tier.id + '"' + (tier.id === state.tier ? " checked" : "") + ">" +
-        (tier.id === t.recommended ? '<span class="m-rec">Most picked</span>' : "") +
         '<span class="m-name">' + esc(tier.name) + '</span><span class="m-price">' + esc(tier.price) + '</span><span class="m-note">' + esc(tier.note || "") + "</span></label></th>";
     }).join("") + "</tr></thead>";
     var lastGroup = null, body = "";

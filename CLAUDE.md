@@ -7,9 +7,10 @@ One-page event site. Plain HTML, CSS, vanilla JS. No framework, no build step. D
   - `sections` sets order and on/off for every section. Nav and footer follow it.
   - `tracks` drive the agenda columns (track-1, track-2, track-3 in CSS, in the order listed). Tracks are told apart by column, number and weight, not color.
   - Schedule sessions carry `tiers`, which the ticket matrix and calendar downloads use.
+  - Session `speakers` are ids of featured speakers (one talk each, plus at most a panel). Everyone else goes in `guests` as name and company only.
   - Ticket rows with `from` (`day:<id>`, `track:<id>`, `session:<id>`) build their preview from the schedule. Rows without `from` show `detail`.
   - `[PLACEHOLDER]` in any string shows a visible Placeholder tag.
-- `styles.css` - design tokens at the top of `:root`. Change tokens first, then section styles.
+- `styles.css` - design tokens at the top of `:root`. Archivo for all text, IBM Plex Mono for times, dates and numbers only. Change tokens first, then section styles.
 - `app.js` - one renderer per section in the `R` object. To add a section: add a renderer `R.<id>`, then add `{ "id": "<id>", "label": "...", "on": true }` to `sections`.
 - `#hero-moment` in `index.html` is reserved for the one big hero element. It holds the 600-seat grid (`renderSeats` in `app.js`); a demo registration marks one seat.
 

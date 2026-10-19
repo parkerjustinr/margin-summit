@@ -17,6 +17,7 @@
   function $(id) { return document.getElementById(id); }
   function byId(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
   function trackIndex(id) { for (var i = 0; i < D.tracks.length; i++) if (D.tracks[i].id === id) return i + 1; return 0; }
+  function pad(n) { return ("0" + n).slice(-2); }
 
   // ---------- time zones ----------
   function tzOffsetMs(date, tz) {
@@ -55,19 +56,29 @@
   // ---------- calendar (.ics) ----------
   function icsStamp(d) { return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); }
   function icsText(v) { return String(v || "").replace(/\[PLACEHOLDER\]\s?/g, "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
+  // RFC 5545: lines longer than 75 octets fold onto continuation lines that start with a space.
+  function icsFold(line) {
+    var out = "", len = 0;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line.charAt(i), n = unescape(encodeURIComponent(ch)).length;
+      if (len + n > 75) { out += "\r\n "; len = 1; }
+      out += ch; len += n;
+    }
+    return out;
+  }
   function downloadIcs(days, filename) {
     var loc = [D.meta.venue, D.meta.address].filter(Boolean).join(", ");
-    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Event Kit//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Margin//Margin 2027//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
     days.forEach(function (day) {
       day.sessions.forEach(function (s) {
         var t = sessionTimes(day, s);
-        lines.push("BEGIN:VEVENT", "UID:" + s.id + "-" + D.meta.year + "@event-kit", "DTSTAMP:" + icsStamp(new Date()),
+        lines.push("BEGIN:VEVENT", "UID:" + s.id + "-" + D.meta.year + "@margin-summit", "DTSTAMP:" + icsStamp(new Date()),
           "DTSTART:" + icsStamp(t.start), "DTEND:" + icsStamp(t.end), "SUMMARY:" + icsText(D.meta.name + ": " + s.title),
           "DESCRIPTION:" + icsText(s.detail), "LOCATION:" + icsText(loc), "END:VEVENT");
       });
     });
     lines.push("END:VCALENDAR");
-    var blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+    var blob = new Blob([lines.map(icsFold).join("\r\n")], { type: "text/calendar;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = filename;
@@ -96,7 +107,8 @@
   function renderHero() {
     var h = D.hero, m = D.meta;
     $("hero").innerHTML =
-      '<p class="hero-when">' + esc(m.dates) + '<span class="sep" aria-hidden="true">/</span>' + esc(m.venue) + ", " + esc(m.city) + "</p>" +
+      '<p class="hero-date">' + m.dates.split(" - ").map(function (part) { return '<span class="nw">' + esc(part) + "</span>"; }).join(" - ") + "</p>" +
+      '<p class="hero-place">' + esc(m.venue) + ", " + esc(m.city) + "</p>" +
       '<h1 id="hero-title">' + h.title.map(function (l) { return "<span>" + esc(l) + "</span>"; }).join("") + "</h1>" +
       '<p class="hero-sub">' + copy(h.sub) + "</p>" +
       '<div class="hero-ctas">' +
@@ -106,6 +118,41 @@
       (h.facts && h.facts.length ? '<ul class="hero-facts" aria-label="At a glance">' + h.facts.map(function (f) {
         return '<li><span class="n">' + esc(f.value) + '</span><span class="l">' + esc(f.label) + "</span></li>";
       }).join("") + "</ul>" : "");
+  }
+
+  // ---------- hero moment: one cell per seat ----------
+  // Seats already sold fill in once on load. A demo registration turns one open seat accent.
+  var SEATS = 600, SOLD = 438;
+  function renderSeats() {
+    var order = [], seed = 20270420, sold = {}, i, html = "";
+    for (i = 0; i < SEATS; i++) order.push(i);
+    for (i = SEATS - 1; i > 0; i--) { // seeded shuffle, so the same seats are sold on every visit
+      seed = (seed * 16807) % 2147483647;
+      var j = seed % (i + 1), tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+    }
+    order.slice(0, SOLD).forEach(function (n, k) { sold[n] = Math.round(k / SOLD * 1400); });
+    for (i = 0; i < SEATS; i++) html += sold[i] != null ? '<i class="t" style="--d:' + sold[i] + 'ms"></i>' : "<i></i>";
+    $("hero-moment").innerHTML = '<div class="seats-wrap"><div class="seats" id="seats">' + html +
+      '<span class="seat-tag" id="seat-tag" hidden>Your seat</span></div></div>';
+    requestAnimationFrame(function () { requestAnimationFrame(function () { $("seats").classList.add("is-on"); }); });
+    window.addEventListener("resize", placeSeatTag);
+  }
+  function markSeat() {
+    var seats = $("seats");
+    if (!seats) return;
+    var open = seats.querySelectorAll("i:not(.t):not(.is-you)");
+    if (!open.length) return;
+    open[Math.floor(Math.random() * open.length)].classList.add("is-you");
+    placeSeatTag();
+  }
+  function placeSeatTag() {
+    var tag = $("seat-tag"), mine = document.querySelectorAll("#seats .is-you");
+    if (!tag || !mine.length) return;
+    var cell = mine[mine.length - 1], flip = cell.offsetLeft > cell.parentNode.clientWidth / 2;
+    tag.hidden = false;
+    tag.classList.toggle("is-flip", flip);
+    tag.style.top = cell.offsetTop + cell.offsetHeight / 2 + "px";
+    tag.style.left = (flip ? cell.offsetLeft - 6 : cell.offsetLeft + cell.offsetWidth + 6) + "px";
   }
 
   // ---------- sections ----------
@@ -138,7 +185,7 @@
       '<div class="sp-body"><h3 class="sp-name">' + esc(first.name) + '</h3><p class="sp-role">' + esc(first.role) + "</p>" +
       '<p class="sp-bio">' + copy(first.bio) + "</p>" + sessionLinks(first.id) + "</div></article>" : "";
     var grid = '<ul class="sp-grid">' + rest.map(function (p) {
-      return '<li class="sp-card" id="speaker-' + p.id + '">' + photo(p, "sp-photo") +
+      return '<li class="sp-card" id="speaker-' + p.id + '">' + (p.photo ? photo(p, "sp-photo") : "") +
         '<h3 class="sp-name">' + (p.link ? '<a href="' + esc(p.link) + '">' + esc(p.name) + "</a>" : esc(p.name)) + "</h3>" +
         '<p class="sp-role">' + esc(p.role) + "</p>" + sessionLinks(p.id) + "</li>";
     }).join("") + "</ul>";
@@ -154,7 +201,7 @@
         (state.tzMode === "local" ? "Show event time (" + esc(tzShort(D.meta.timezone, refDate)) + ")" : "Show my time (" + esc(tzShort(USER_TZ, refDate)) + ")") + "</button>" : "") +
       "</div>";
     var legend = '<ul class="track-legend" aria-label="Tracks">' + D.tracks.map(function (t, i) {
-      return '<li class="track-' + (i + 1) + '"><span class="swatch" aria-hidden="true"></span>' + esc(t.name) + "</li>";
+      return '<li class="track-' + (i + 1) + '"><span class="tn">' + pad(i + 1) + "</span> " + esc(t.name) + "</li>";
     }).join("") + "</ul>";
     var single = s.days.length === 1;
     var tabs = single ? "" : '<div class="day-tabs" role="tablist" aria-label="Event days">' + s.days.map(function (day, i) {
@@ -164,26 +211,34 @@
     }).join("") + "</div>";
     var panels = s.days.map(function (day, i) {
       var sorted = day.sessions.slice().sort(function (a, b) { return a.start < b.start ? -1 : a.start > b.start ? 1 : 0; });
+      // Each distinct start time is one grid row; tracks are columns. Long sessions span the rows they overlap.
+      var slots = sorted.map(function (x) { return x.start; }).filter(function (v, k, a) { return a.indexOf(v) === k; });
       return (single ? '<div class="day-panel" id="panel-' + day.id + '"><h3 class="day-single">' + esc(day.title) + "</h3>"
         : '<div class="day-panel" role="tabpanel" id="panel-' + day.id + '" aria-labelledby="tab-' + day.id + '"' + (i ? " hidden" : "") + ' tabindex="0">') +
         '<ol class="sessions">' + sorted.map(function (x) {
           var t = sessionTimes(day, x), tr = byId(D.tracks, x.track);
+          // Featured speakers link to their card; guests show name and company only.
           var spk = (x.speakers || []).map(function (id) {
             var p = byId(D.speakers.items, id);
-            return p ? '<a href="#speaker-' + id + '">' + esc(p.name) + "</a>" : "";
-          }).filter(Boolean).join(", ");
-          return '<li class="session track-' + trackIndex(x.track) + '" id="session-' + x.id + '">' +
-            '<span class="s-time"><time datetime="' + t.start.toISOString() + '">' + esc(t.label) + "</time></span>" +
+            return p ? '<span class="s-person"><a href="#speaker-' + id + '">' + esc(p.name) + "</a></span>" : "";
+          }).concat((x.guests || []).map(function (g) {
+            return '<span class="s-person">' + esc(g.name) + ', <span class="s-co">' + esc(g.company) + "</span></span>";
+          })).filter(Boolean).join("");
+          var k = trackIndex(x.track);
+          var span = slots.filter(function (v) { return v >= x.start && v < x.end; }).length || 1;
+          return '<li class="session track-' + k + (k ? "" : spk ? " is-plenary" : " is-break") + '" id="session-' + x.id +
+            '" style="--row:' + (slots.indexOf(x.start) + 1) + ";--span:" + span + '">' +
+            '<p class="s-meta"><span class="s-time"><time datetime="' + t.start.toISOString() + '">' + esc(t.label) + "</time></span>" +
+              (tr ? '<span class="s-track"><span class="tn">' + pad(k) + '</span> <span class="s-track-name">' + esc(tr.name) + "</span></span>" : "") + "</p>" +
             '<div class="s-body"><h3 class="s-title">' + esc(x.title) + "</h3>" +
               (spk ? '<p class="s-speakers">' + spk + "</p>" : "") +
               (x.detail ? '<p class="s-detail">' + copy(x.detail) + "</p>" : "") + "</div>" +
-            (tr ? '<span class="s-track">' + esc(tr.name) + "</span>" : "") +
           "</li>";
         }).join("") + "</ol>" +
         '<button type="button" class="btn btn-small ics-btn" data-ics-day="' + day.id + '">Add ' + esc(day.label) + " to calendar</button>" +
       "</div>";
     }).join("");
-    return sectionShell("schedule", s.heading, (s.note ? '<p class="note">' + copy(s.note) + "</p>" : "") + tzBar + legend + tabs + panels);
+    return sectionShell("schedule", s.heading, (s.note ? '<p class="note">' + copy(s.note) + "</p>" : "") + tzBar + tabs + legend + panels);
   };
 
   function rowPreviewItems(row) {
@@ -221,7 +276,6 @@
     var head = '<thead><tr><td class="m-corner"></td>' + t.tiers.map(function (tier) {
       return '<th scope="col" class="m-col c-' + tier.id + (tier.id === t.recommended ? " is-rec" : "") + '"><label class="m-pick">' +
         '<input type="radio" name="tier" value="' + tier.id + '"' + (tier.id === state.tier ? " checked" : "") + ">" +
-        (tier.id === t.recommended ? '<span class="m-rec">Most picked</span>' : "") +
         '<span class="m-name">' + esc(tier.name) + '</span><span class="m-price">' + esc(tier.price) + '</span><span class="m-note">' + esc(tier.note || "") + "</span></label></th>";
     }).join("") + "</tr></thead>";
     var lastGroup = null, body = "";
@@ -238,7 +292,7 @@
     var nums = t.tiers.map(function (x) { return priceNum(x.price); });
     var perDay = nums.every(function (n, i) { return n !== null && t.tiers[i].days; })
       ? '<tfoot><tr><th scope="row">Cost per day</th>' + t.tiers.map(function (tier, i) {
-          return '<td class="c-' + tier.id + '" data-tier="' + esc(tier.name) + '">$' + Math.round(nums[i] / tier.days) + "</td>";
+          return '<td class="c-' + tier.id + '" data-tier="' + esc(tier.name) + '">$' + Math.round(nums[i] / tier.days).toLocaleString("en-US") + "</td>";
         }).join("") + "</tr></tfoot>" : "";
     var table = '<table class="matrix" id="matrix" style="--tiers:' + t.tiers.length + '"><caption class="sr">What each ticket includes</caption>' + head + "<tbody>" + body + "</tbody>" + perDay + "</table>";
     var preview = '<aside class="preview" id="preview" aria-live="polite" aria-label="Row preview"><p class="pv-empty">Hover or focus a row to see exactly what it covers.</p></aside>';
@@ -252,7 +306,7 @@
   R.sponsors = function () {
     var s = D.sponsors;
     return sectionShell("sponsors", s.heading, s.tiers.map(function (tier, i) {
-      return '<div class="sponsor-tier' + (i === 0 ? " is-top" : "") + '"><h3 class="tier-name">' + esc(tier.name) + '</h3><ul class="sponsor-list">' +
+      return '<div class="sponsor-tier tier-' + (i + 1) + (i === 0 ? " is-top" : "") + '"><h3 class="tier-name">' + esc(tier.name) + '</h3><ul class="sponsor-list">' +
         tier.items.map(function (x) {
           var inner = x.logo ? '<img src="' + esc(x.logo) + '" alt="' + esc(x.name) + '" loading="lazy">' : '<span class="wordmark">' + esc(x.name) + "</span>";
           return "<li>" + (x.link ? '<a href="' + esc(x.link) + '">' + inner + "</a>" : inner) + "</li>";
@@ -400,7 +454,7 @@
     var r = D.registration, days = daysForTier(rec.tier.id);
     $("reg-out").innerHTML =
       '<div class="confirm" role="status" tabindex="-1" id="reg-confirm">' +
-        '<p class="confirm-kicker">Demo confirmation</p><h3>You\'re registered.</h3>' +
+        '<h3>You\'re registered.</h3>' +
         '<dl class="confirm-dl"><dt>Name</dt><dd>' + esc(rec.name) + "</dd><dt>Email</dt><dd>" + esc(rec.email) +
         "</dd><dt>Ticket</dt><dd>" + esc(rec.tier.name) + ", " + esc(rec.tier.price) + "</dd></dl>" +
         "<p>" + copy(r.confirmation) + "</p>" +
@@ -409,6 +463,7 @@
         }).join("") + '<button type="button" class="btn btn-small" id="reg-again">Register someone else</button></div>' +
       "</div>";
     $("reg-confirm").focus();
+    markSeat();
     $("reg-again").addEventListener("click", function () {
       var sec = $("register");
       sec.outerHTML = R.register();
@@ -473,7 +528,7 @@
     }).join("");
     var hasTickets = on.some(function (s) { return s.id === "tickets"; });
     $("header-cta").setAttribute("href", hasTickets ? "#tickets" : "#register");
-    $("header-cta").textContent = hasTickets ? "Tickets" : "Register";
+    $("header-cta").textContent = "Register";
     $("sections").innerHTML = on.map(function (s) { return R[s.id](); }).join("");
     $("footer").innerHTML = '<div class="wrap footer-inner"><p class="footer-word" aria-hidden="true">' + esc(m.name) + "</p>" +
       '<nav aria-label="Footer"><ul class="footer-links">' + on.map(function (s) { return '<li><a href="#' + s.id + '">' + esc(s.label) + "</a></li>"; }).join("") + "</ul></nav>" +
@@ -493,6 +548,7 @@
     .then(function (data) {
       D = data;
       renderHero();
+      renderSeats();
       renderChrome();
       wireTabs(); wireMatrix(); wireForm(); wireGlobal();
       if (location.hash.length > 1) {

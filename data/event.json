@@ -1,167 +1,169 @@
 {
   "meta": {
-    "name": "Sample Event",
-    "shortName": "SE",
-    "year": "2026",
-    "tagline": "[PLACEHOLDER] One line that says what this event is and who it is for.",
-    "timezone": "America/New_York",
-    "tzLabel": "ET",
-    "dates": "Sat, Nov 14 - Sun, Nov 15, 2026",
-    "venue": "Sample Venue",
-    "city": "City, ST",
-    "address": "123 Sample St, City, ST 00000",
-    "pageTitle": "Sample Event 2026 - City, ST",
-    "description": "[PLACEHOLDER] Meta description: what, when, where, in one sentence.",
-    "placeholderNotice": "Sample content. Every name, time, and price on this page is placeholder.",
-    "footerLine": "Event site concept built on Arrived."
+    "name": "Margin",
+    "shortName": "M",
+    "year": "2027",
+    "tagline": "A two-day summit for operations leaders.",
+    "timezone": "America/Chicago",
+    "tzLabel": "CT",
+    "dates": "Tue, Apr 20 - Wed, Apr 21, 2027",
+    "venue": "Hartwell Hall",
+    "city": "Chicago, IL",
+    "address": "W Fulton Market at N Morgan St, Chicago, IL 60607",
+    "pageTitle": "Margin 2027 - Operations leadership summit, Chicago",
+    "description": "Margin is a two-day operations leadership summit in Chicago, April 20 and 21, 2027.",
+    "placeholderNotice": "Margin is fictional. Every name, company, price, and detail on this page is made up.",
+    "footerLine": "Margin is a fictional event. Site concept and design by Justin Parker."
   },
-
   "sections": [
-    { "id": "about", "label": "About", "on": true },
-    { "id": "speakers", "label": "Speakers", "on": true },
-    { "id": "schedule", "label": "Schedule", "on": true },
-    { "id": "tickets", "label": "Tickets", "on": true },
-    { "id": "sponsors", "label": "Sponsors", "on": true },
-    { "id": "venue", "label": "Getting there", "on": true },
-    { "id": "register", "label": "Register", "on": true },
-    { "id": "faq", "label": "FAQ", "on": true }
+    {"id": "schedule", "label": "Agenda", "on": true},
+    {"id": "speakers", "label": "Speakers", "on": true},
+    {"id": "sponsors", "label": "Sponsors", "on": true},
+    {"id": "venue", "label": "Venue", "on": true},
+    {"id": "tickets", "label": "Passes", "on": true},
+    {"id": "register", "label": "Register", "on": true},
+    {"id": "faq", "label": "FAQ", "on": true},
+    {"id": "about", "label": "About", "on": false}
   ],
-
   "hero": {
-    "title": ["Sample", "Event"],
-    "sub": "[PLACEHOLDER] Two sentences max. What happens, who should come, why this year.",
-    "primaryCta": { "label": "Get tickets", "href": "#tickets" },
-    "secondaryCta": { "label": "See the schedule", "href": "#schedule" },
-    "facts": [
-      { "value": "2", "label": "Days" },
-      { "value": "24", "label": "Sessions" },
-      { "value": "12", "label": "Speakers" },
-      { "value": "600", "label": "Seats" }
-    ]
+    "title": ["Margin"],
+    "sub": "Margin is a two-day summit for the directors and VPs who run operations.",
+    "primaryCta": {"label": "Register", "href": "#tickets"},
+    "secondaryCta": {"label": "See the agenda", "href": "#schedule"},
+    "facts": [{"value": "600", "label": "Operations leaders"}, {"value": "3", "label": "Tracks"}]
   },
-
   "about": {
-    "heading": "[PLACEHOLDER] About heading that says something specific",
-    "paragraphs": [
-      "[PLACEHOLDER] First paragraph. The one thing that makes this event different.",
-      "[PLACEHOLDER] Second paragraph. What a first-timer should expect."
-    ]
+    "heading": "About",
+    "paragraphs": []
   },
-
   "tracks": [
-    { "id": "main", "name": "Main Stage" },
-    { "id": "studio", "name": "Studio" },
-    { "id": "social", "name": "Social" }
+    {"id": "supply", "name": "Supply Chain"},
+    {"id": "people", "name": "People"},
+    {"id": "systems", "name": "Systems"}
   ],
-
   "speakers": {
     "heading": "Speakers",
-    "intro": "[PLACEHOLDER] One line on who is speaking and why it matters.",
+    "intro": "",
     "items": [
-      { "id": "sp1", "name": "Speaker One", "role": "Title, Organization", "bio": "[PLACEHOLDER] Two-line bio for the featured speaker. This person gets the big slot.", "photo": "", "link": "" },
-      { "id": "sp2", "name": "Speaker Two", "role": "Title, Organization", "bio": "[PLACEHOLDER] Short bio.", "photo": "", "link": "" },
-      { "id": "sp3", "name": "Speaker Three", "role": "Title, Organization", "bio": "[PLACEHOLDER] Short bio.", "photo": "", "link": "" },
-      { "id": "sp4", "name": "Speaker Four", "role": "Title, Organization", "bio": "[PLACEHOLDER] Short bio.", "photo": "", "link": "" },
-      { "id": "sp5", "name": "Speaker Five", "role": "Title, Organization", "bio": "[PLACEHOLDER] Short bio.", "photo": "", "link": "" },
-      { "id": "sp6", "name": "Speaker Six", "role": "Title, Organization", "bio": "[PLACEHOLDER] Short bio.", "photo": "", "link": "" }
+      {"id": "sp1", "name": "Renata Okafor", "role": "COO, Halverd Freight", "bio": "Runs 40 cross-dock sites across the Midwest.", "photo": "", "link": ""},
+      {"id": "sp2", "name": "Tomas Lindqvist", "role": "VP Operations, Northpine Foods", "bio": "", "photo": "", "link": ""},
+      {"id": "sp3", "name": "Priya Raman", "role": "Director of Planning, Corvel Supply", "bio": "", "photo": "", "link": ""},
+      {"id": "sp4", "name": "Dana Whitcombe", "role": "Head of People Operations, Tallis Health", "bio": "", "photo": "", "link": ""},
+      {"id": "sp5", "name": "Marcus Bell", "role": "VP Fulfillment, Larkspur Home", "bio": "", "photo": "", "link": ""},
+      {"id": "sp6", "name": "Hana Sato", "role": "Chief Data Officer, Odessen Logistics", "bio": "", "photo": "", "link": ""},
+      {"id": "sp7", "name": "Joel Ferreira", "role": "Plant Director, Ferrow Manufacturing", "bio": "", "photo": "", "link": ""}
     ]
   },
-
   "schedule": {
-    "heading": "Schedule",
-    "note": "[PLACEHOLDER] Times are draft.",
+    "heading": "Agenda",
+    "note": "",
     "days": [
       {
         "id": "d1",
         "label": "Day 1",
-        "date": "2026-11-14",
-        "title": "Saturday, Nov 14",
+        "date": "2027-04-20",
+        "title": "Tuesday, Apr 20",
         "sessions": [
-          { "id": "s101", "start": "09:00", "end": "10:00", "title": "Doors and check-in", "track": "social", "speakers": [], "detail": "[PLACEHOLDER] Badge pickup at the front desk.", "tiers": ["full", "day1", "vip"] },
-          { "id": "s102", "start": "10:00", "end": "10:45", "title": "Opening keynote", "track": "main", "speakers": ["sp1"], "detail": "[PLACEHOLDER] Session description.", "tiers": ["full", "day1", "vip"] },
-          { "id": "s103", "start": "11:00", "end": "12:00", "title": "Panel session", "track": "main", "speakers": ["sp2", "sp3"], "detail": "[PLACEHOLDER] Session description.", "tiers": ["full", "day1", "vip"] },
-          { "id": "s104", "start": "11:00", "end": "12:30", "title": "Hands-on workshop", "track": "studio", "speakers": ["sp4"], "detail": "[PLACEHOLDER] Limited seats.", "tiers": ["full", "vip"] },
-          { "id": "s105", "start": "12:30", "end": "13:30", "title": "Lunch", "track": "social", "speakers": [], "detail": "[PLACEHOLDER] Included with Full and VIP.", "tiers": ["full", "vip"] },
-          { "id": "s106", "start": "14:00", "end": "15:00", "title": "Fireside chat", "track": "main", "speakers": ["sp5"], "detail": "[PLACEHOLDER] Session description.", "tiers": ["full", "day1", "vip"] },
-          { "id": "s107", "start": "18:00", "end": "20:00", "title": "Speaker dinner", "track": "social", "speakers": ["sp1", "sp6"], "detail": "[PLACEHOLDER] VIP only.", "tiers": ["vip"] }
+          {"id": "s101", "start": "08:00", "end": "09:00", "title": "Check-in and breakfast", "track": "", "speakers": [], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s102", "start": "09:00", "end": "09:45", "title": "Opening keynote: Cutting cost per order without cutting service levels", "track": "", "speakers": ["sp1"], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s103", "start": "10:00", "end": "10:45", "title": "Setting safety stock when lead times vary", "track": "supply", "speakers": ["sp3"], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s104", "start": "10:00", "end": "10:45", "title": "Structuring shift handoffs in 24-hour operations", "track": "people", "speakers": ["sp4"], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s105", "start": "10:00", "end": "10:45", "title": "Building one operations dashboard from five systems", "track": "systems", "speakers": ["sp6"], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s106", "start": "11:00", "end": "12:30", "title": "Workshop: Build a 13-week demand forecast", "track": "supply", "speakers": [], "guests": [{"name": "Ana Ruiz", "company": "Coldwater Dairy Co-op"}], "detail": "Bring a laptop. 40 seats.", "tiers": ["full", "exec"]},
+          {"id": "s107", "start": "11:00", "end": "11:45", "title": "Hiring and onboarding frontline supervisors", "track": "people", "speakers": [], "guests": [{"name": "Rita Kowalski", "company": "Northgate Clinics"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s108", "start": "11:00", "end": "11:45", "title": "Replacing spreadsheet planning with a WMS", "track": "systems", "speakers": [], "guests": [{"name": "Grace Liu", "company": "Tolvane Electronics"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s109", "start": "12:30", "end": "13:30", "title": "Lunch", "track": "", "speakers": [], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s110", "start": "13:30", "end": "14:15", "title": "Renegotiating carrier contracts after a rate swing", "track": "supply", "speakers": ["sp2"], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s111", "start": "13:30", "end": "14:15", "title": "Training new managers in their first 90 days", "track": "people", "speakers": [], "guests": [{"name": "Sam Okonkwo", "company": "Pierce & Haldane Distribution"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s112", "start": "13:30", "end": "14:15", "title": "Choosing what to automate first in a warehouse", "track": "systems", "speakers": [], "guests": [{"name": "Ben Adler", "company": "Kestrow Tools"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s113", "start": "14:45", "end": "15:30", "title": "Panel: Measuring and reducing unplanned downtime", "track": "", "speakers": ["sp2"], "guests": [{"name": "Nadia Haddad", "company": "Vantor Pharma Logistics"}, {"name": "Chris Dubois", "company": "Ashgrove Building Supply"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s114", "start": "18:30", "end": "21:00", "title": "Leaders' dinner", "track": "", "speakers": [], "detail": "Seated dinner with the speakers.", "tiers": ["exec"]}
         ]
       },
       {
         "id": "d2",
         "label": "Day 2",
-        "date": "2026-11-15",
-        "title": "Sunday, Nov 15",
+        "date": "2027-04-21",
+        "title": "Wednesday, Apr 21",
         "sessions": [
-          { "id": "s201", "start": "09:30", "end": "10:00", "title": "Doors", "track": "social", "speakers": [], "detail": "[PLACEHOLDER] Coffee in the lobby.", "tiers": ["full", "day2", "vip"] },
-          { "id": "s202", "start": "10:00", "end": "11:00", "title": "Morning keynote", "track": "main", "speakers": ["sp6"], "detail": "[PLACEHOLDER] Session description.", "tiers": ["full", "day2", "vip"] },
-          { "id": "s203", "start": "11:15", "end": "12:30", "title": "Studio session", "track": "studio", "speakers": ["sp3", "sp4"], "detail": "[PLACEHOLDER] Limited seats.", "tiers": ["full", "vip"] },
-          { "id": "s204", "start": "13:30", "end": "14:30", "title": "Closing talk", "track": "main", "speakers": ["sp2"], "detail": "[PLACEHOLDER] Session description.", "tiers": ["full", "day2", "vip"] },
-          { "id": "s205", "start": "15:00", "end": "17:00", "title": "Closing party", "track": "social", "speakers": [], "detail": "[PLACEHOLDER] Everyone welcome.", "tiers": ["full", "day2", "vip"] }
+          {"id": "s201", "start": "08:00", "end": "09:00", "title": "Breakfast", "track": "", "speakers": [], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s202", "start": "09:00", "end": "09:45", "title": "Morning keynote: Running a plant on five daily metrics", "track": "", "speakers": ["sp7"], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s203", "start": "10:00", "end": "10:45", "title": "Running a monthly S&OP process", "track": "supply", "speakers": [], "guests": [{"name": "Mei Tanaka", "company": "Fairmoor Grocers"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s204", "start": "10:00", "end": "11:30", "title": "Workshop: Map and fix one broken process", "track": "people", "speakers": [], "guests": [{"name": "Tariq Shah", "company": "Oakline Packaging"}], "detail": "Bring a real process. 40 seats.", "tiers": ["full", "exec"]},
+          {"id": "s205", "start": "10:00", "end": "10:45", "title": "Rolling out handheld scanners on the warehouse floor", "track": "systems", "speakers": [], "guests": [{"name": "Luis Ortega", "company": "Calder Couriers"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s206", "start": "11:00", "end": "11:45", "title": "Handling returns in high-volume e-commerce fulfillment", "track": "supply", "speakers": ["sp5"], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s207", "start": "11:00", "end": "11:45", "title": "Writing software RFPs and scoring vendors", "track": "systems", "speakers": [], "guests": [{"name": "Dev Patel", "company": "Holbrook Medical Devices"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s208", "start": "12:00", "end": "13:00", "title": "Lunch", "track": "", "speakers": [], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s209", "start": "13:00", "end": "13:45", "title": "Cutting first-year turnover in hourly roles", "track": "people", "speakers": [], "guests": [{"name": "Erin Walsh", "company": "Quarry Hill Foods"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s210", "start": "13:00", "end": "13:45", "title": "Reaching 99% inventory accuracy with cycle counts", "track": "supply", "speakers": [], "guests": [{"name": "Ivy Chen", "company": "Strand Apparel"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s211", "start": "14:00", "end": "14:45", "title": "Closing panel: Operations budgets and headcount for 2028", "track": "", "speakers": ["sp5"], "guests": [{"name": "Owen Mbatha", "company": "Merrin Home Goods"}, {"name": "Jo Brennan", "company": "Ferris Cold Chain"}], "detail": "", "tiers": ["day", "full", "exec"]}
         ]
       }
     ]
   },
-
   "tickets": {
-    "heading": "Tickets",
-    "intro": "[PLACEHOLDER] One line. Pick a column to choose a ticket. Hover or tap a row to see exactly what it covers.",
+    "heading": "Passes",
+    "intro": "",
     "recommended": "full",
-    "tiers": [
-      { "id": "day1", "name": "Day 1", "price": "$45", "note": "Sat only", "days": 1 },
-      { "id": "day2", "name": "Day 2", "price": "$45", "note": "Sun only", "days": 1 },
-      { "id": "full", "name": "Full pass", "price": "$80", "note": "Both days", "days": 2 },
-      { "id": "vip", "name": "VIP", "price": "$150", "note": "Both days, plus", "days": 2 }
-    ],
+    "tiers": [{"id": "day", "name": "One day", "price": "$795", "note": "Tue or Wed", "days": 1}, {"id": "full", "name": "Full", "price": "$1,395", "note": "Both days", "days": 2}, {"id": "exec", "name": "Executive", "price": "$2,195", "note": "Both days, plus", "days": 2}],
     "rows": [
-      { "id": "r-d1", "group": "Access", "label": "Day 1 sessions", "from": "day:d1", "tiers": { "day1": "yes", "day2": "no", "full": "yes", "vip": "yes" } },
-      { "id": "r-d2", "group": "Access", "label": "Day 2 sessions", "from": "day:d2", "tiers": { "day1": "no", "day2": "yes", "full": "yes", "vip": "yes" } },
-      { "id": "r-ws", "group": "Access", "label": "Workshops and studio", "from": "track:studio", "tiers": { "day1": "no", "day2": "no", "full": "yes", "vip": "yes" } },
-      { "id": "r-lunch", "group": "Extras", "label": "Lunch", "detail": "[PLACEHOLDER] Lunch both days in the main hall.", "tiers": { "day1": "no", "day2": "no", "full": "yes", "vip": "yes" } },
-      { "id": "r-dinner", "group": "Extras", "label": "Speaker dinner", "from": "session:s107", "tiers": { "day1": "no", "day2": "no", "full": "no", "vip": "yes" } },
-      { "id": "r-seat", "group": "Extras", "label": "Reserved seating", "detail": "[PLACEHOLDER] First three rows at every Main Stage session.", "tiers": { "day1": "no", "day2": "no", "full": "no", "vip": "Front rows" } }
+      {"id": "r-days", "label": "Days", "detail": "The one-day pass covers the day you pick at registration.", "tiers": {"day": "1", "full": "2", "exec": "2"}},
+      {"id": "r-ws", "label": "Workshops", "detail": "Two hands-on sessions, 40 seats each, first come.", "tiers": {"day": "no", "full": "yes", "exec": "yes"}},
+      {"id": "r-rec", "label": "Session recordings", "detail": "Every track session, posted within a week.", "tiers": {"day": "no", "full": "yes", "exec": "yes"}},
+      {"id": "r-dinner", "label": "Leaders' dinner", "from": "session:s114", "tiers": {"day": "no", "full": "no", "exec": "yes"}},
+      {"id": "r-seat", "label": "Reserved keynote seats", "detail": "The first five rows at every keynote and panel.", "tiers": {"day": "no", "full": "no", "exec": "yes"}}
     ],
-    "footnote": "[PLACEHOLDER] Prices include fees. Refunds until 7 days before."
+    "footnote": "Prices in USD."
   },
-
   "sponsors": {
     "heading": "Sponsors",
     "tiers": [
-      { "name": "Presented by", "items": [{ "name": "Sponsor One", "logo": "", "link": "" }] },
-      { "name": "Partners", "items": [{ "name": "Sponsor Two", "logo": "", "link": "" }, { "name": "Sponsor Three", "logo": "", "link": "" }, { "name": "Sponsor Four", "logo": "", "link": "" }] }
+      {"name": "Lead", "items": [{"name": "Tessel Labs", "logo": "", "link": ""}, {"name": "Ordway Routing", "logo": "", "link": ""}]},
+      {"name": "Partners", "items": [{"name": "Pallet & Pike", "logo": "", "link": ""}, {"name": "Quillon", "logo": "", "link": ""}, {"name": "Merrow Data", "logo": "", "link": ""}, {"name": "Hatchfield", "logo": "", "link": ""}]},
+      {
+        "name": "Supporters",
+        "items": [
+          {"name": "Corrin Scale", "logo": "", "link": ""},
+          {"name": "Dockline", "logo": "", "link": ""},
+          {"name": "Fenwick Labelworks", "logo": "", "link": ""},
+          {"name": "Gantry Analytics", "logo": "", "link": ""},
+          {"name": "Ostler Fleet", "logo": "", "link": ""},
+          {"name": "Runwell Staffing", "logo": "", "link": ""},
+          {"name": "Spurline Pallets", "logo": "", "link": ""},
+          {"name": "Torvik Controls", "logo": "", "link": ""}
+        ]
+      }
     ]
   },
-
   "venue": {
-    "heading": "Getting there",
-    "intro": "[PLACEHOLDER] One line on the venue and the best way to arrive.",
+    "heading": "Venue",
+    "intro": "Hartwell Hall, a former cold-storage warehouse in Fulton Market.",
     "mapLink": "",
     "items": [
-      { "title": "Address", "body": "[PLACEHOLDER] 123 Sample St, City, ST 00000." },
-      { "title": "Transit", "body": "[PLACEHOLDER] Nearest station and walk time." },
-      { "title": "Parking", "body": "[PLACEHOLDER] Where, and what it costs." },
-      { "title": "Check-in", "body": "[PLACEHOLDER] Where to go first and what to bring." },
-      { "title": "Accessibility", "body": "[PLACEHOLDER] Step-free access, seating, and who to contact." }
+      {"title": "Address", "body": "W Fulton Market at N Morgan St, Chicago, IL 60607. [PLACEHOLDER] Street number."},
+      {"title": "CTA", "body": "Morgan station on the Green and Pink Lines, at Lake and Morgan. One block south. Elevators on both platforms."},
+      {"title": "From O'Hare", "body": "Blue Line to Clark/Lake, then Green or Pink Line west to Morgan. [PLACEHOLDER] About 50 minutes."},
+      {"title": "From Midway", "body": "Orange Line to Clark/Lake, then Green or Pink Line west to Morgan. [PLACEHOLDER] About 40 minutes."},
+      {"title": "Metra", "body": "Ogilvie or Union Station. [PLACEHOLDER] About a 20-minute walk."},
+      {"title": "Parking", "body": "Attended garages at 650 and 832 W Fulton Market. [PLACEHOLDER] Rates and any event discount."}
     ]
   },
-
   "registration": {
     "heading": "Register",
-    "intro": "[PLACEHOLDER] One line.",
+    "intro": "",
     "demoNotice": "Demo form. Nothing is sent anywhere.",
-    "extraFields": [
-      { "id": "org", "label": "Company or school", "type": "text", "required": false },
-      { "id": "access", "label": "Access needs", "type": "textarea", "required": false, "hint": "Anything we should plan for." }
-    ],
-    "confirmation": "[PLACEHOLDER] What happens next: confirmation email, where to check in."
+    "extraFields": [{"id": "org", "label": "Company", "type": "text", "required": false}, {"id": "access", "label": "Access or dietary needs", "type": "textarea", "required": false}],
+    "confirmation": "A receipt is on its way. Bring photo ID to check-in."
   },
-
   "faq": {
     "heading": "FAQ",
     "items": [
-      { "q": "[PLACEHOLDER] Can I transfer my ticket?", "a": "[PLACEHOLDER] Answer." },
-      { "q": "[PLACEHOLDER] Is there a dress code?", "a": "[PLACEHOLDER] Answer." },
-      { "q": "[PLACEHOLDER] Will sessions be recorded?", "a": "[PLACEHOLDER] Answer." },
-      { "q": "[PLACEHOLDER] What is the refund policy?", "a": "[PLACEHOLDER] Answer." }
+      {"q": "Can I move between tracks?", "a": "Yes. Every pass opens all three tracks, so sit in any room."},
+      {"q": "Can I transfer my pass?", "a": "Yes. Email us the new name up to 48 hours before doors."},
+      {"q": "What is the refund policy?", "a": "Full refund until March 19, 2027. After that, transfer your pass instead."},
+      {"q": "Are there team rates?", "a": "Groups of five or more save 15%. Email us for a code."},
+      {"q": "Is food included?", "a": "Breakfast and lunch on every day your pass covers."},
+      {"q": "What should I wear?", "a": "Business casual. The hall runs cool."}
     ]
   }
 }

@@ -17,6 +17,7 @@
   function $(id) { return document.getElementById(id); }
   function byId(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
   function trackIndex(id) { for (var i = 0; i < D.tracks.length; i++) if (D.tracks[i].id === id) return i + 1; return 0; }
+  function pad(n) { return ("0" + n).slice(-2); }
 
   // ---------- time zones ----------
   function tzOffsetMs(date, tz) {
@@ -96,7 +97,8 @@
   function renderHero() {
     var h = D.hero, m = D.meta;
     $("hero").innerHTML =
-      '<p class="hero-when">' + esc(m.dates) + '<span class="sep" aria-hidden="true">/</span>' + esc(m.venue) + ", " + esc(m.city) + "</p>" +
+      '<p class="hero-date">' + esc(m.dates) + "</p>" +
+      '<p class="hero-place">' + esc(m.venue) + ", " + esc(m.city) + "</p>" +
       '<h1 id="hero-title">' + h.title.map(function (l) { return "<span>" + esc(l) + "</span>"; }).join("") + "</h1>" +
       '<p class="hero-sub">' + copy(h.sub) + "</p>" +
       '<div class="hero-ctas">' +
@@ -106,6 +108,41 @@
       (h.facts && h.facts.length ? '<ul class="hero-facts" aria-label="At a glance">' + h.facts.map(function (f) {
         return '<li><span class="n">' + esc(f.value) + '</span><span class="l">' + esc(f.label) + "</span></li>";
       }).join("") + "</ul>" : "");
+  }
+
+  // ---------- hero moment: one cell per seat ----------
+  // Seats already sold fill in once on load. A demo registration turns one open seat accent.
+  var SEATS = 600, SOLD = 438;
+  function renderSeats() {
+    var order = [], seed = 20270420, sold = {}, i, html = "";
+    for (i = 0; i < SEATS; i++) order.push(i);
+    for (i = SEATS - 1; i > 0; i--) { // seeded shuffle, so the same seats are sold on every visit
+      seed = (seed * 16807) % 2147483647;
+      var j = seed % (i + 1), tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+    }
+    order.slice(0, SOLD).forEach(function (n, k) { sold[n] = Math.round(k / SOLD * 1400); });
+    for (i = 0; i < SEATS; i++) html += sold[i] != null ? '<i class="t" style="--d:' + sold[i] + 'ms"></i>' : "<i></i>";
+    $("hero-moment").innerHTML = '<div class="seats-wrap"><div class="seats" id="seats">' + html +
+      '<span class="seat-tag" id="seat-tag" hidden>Your seat</span></div></div>';
+    requestAnimationFrame(function () { requestAnimationFrame(function () { $("seats").classList.add("is-on"); }); });
+    window.addEventListener("resize", placeSeatTag);
+  }
+  function markSeat() {
+    var seats = $("seats");
+    if (!seats) return;
+    var open = seats.querySelectorAll("i:not(.t):not(.is-you)");
+    if (!open.length) return;
+    open[Math.floor(Math.random() * open.length)].classList.add("is-you");
+    placeSeatTag();
+  }
+  function placeSeatTag() {
+    var tag = $("seat-tag"), mine = document.querySelectorAll("#seats .is-you");
+    if (!tag || !mine.length) return;
+    var cell = mine[mine.length - 1], flip = cell.offsetLeft > cell.parentNode.clientWidth / 2;
+    tag.hidden = false;
+    tag.classList.toggle("is-flip", flip);
+    tag.style.top = cell.offsetTop + cell.offsetHeight / 2 + "px";
+    tag.style.left = (flip ? cell.offsetLeft - 6 : cell.offsetLeft + cell.offsetWidth + 6) + "px";
   }
 
   // ---------- sections ----------
@@ -154,7 +191,7 @@
         (state.tzMode === "local" ? "Show event time (" + esc(tzShort(D.meta.timezone, refDate)) + ")" : "Show my time (" + esc(tzShort(USER_TZ, refDate)) + ")") + "</button>" : "") +
       "</div>";
     var legend = '<ul class="track-legend" aria-label="Tracks">' + D.tracks.map(function (t, i) {
-      return '<li class="track-' + (i + 1) + '"><span class="swatch" aria-hidden="true"></span>' + esc(t.name) + "</li>";
+      return '<li class="track-' + (i + 1) + '"><span class="tn">' + pad(i + 1) + "</span> " + esc(t.name) + "</li>";
     }).join("") + "</ul>";
     var single = s.days.length === 1;
     var tabs = single ? "" : '<div class="day-tabs" role="tablist" aria-label="Event days">' + s.days.map(function (day, i) {
@@ -164,6 +201,8 @@
     }).join("") + "</div>";
     var panels = s.days.map(function (day, i) {
       var sorted = day.sessions.slice().sort(function (a, b) { return a.start < b.start ? -1 : a.start > b.start ? 1 : 0; });
+      // Each distinct start time is one grid row; tracks are columns. Long sessions span the rows they overlap.
+      var slots = sorted.map(function (x) { return x.start; }).filter(function (v, k, a) { return a.indexOf(v) === k; });
       return (single ? '<div class="day-panel" id="panel-' + day.id + '"><h3 class="day-single">' + esc(day.title) + "</h3>"
         : '<div class="day-panel" role="tabpanel" id="panel-' + day.id + '" aria-labelledby="tab-' + day.id + '"' + (i ? " hidden" : "") + ' tabindex="0">') +
         '<ol class="sessions">' + sorted.map(function (x) {
@@ -172,18 +211,21 @@
             var p = byId(D.speakers.items, id);
             return p ? '<a href="#speaker-' + id + '">' + esc(p.name) + "</a>" : "";
           }).filter(Boolean).join(", ");
-          return '<li class="session track-' + trackIndex(x.track) + '" id="session-' + x.id + '">' +
-            '<span class="s-time"><time datetime="' + t.start.toISOString() + '">' + esc(t.label) + "</time></span>" +
+          var k = trackIndex(x.track);
+          var span = slots.filter(function (v) { return v >= x.start && v < x.end; }).length || 1;
+          return '<li class="session track-' + k + (k ? "" : spk ? " is-plenary" : " is-break") + '" id="session-' + x.id +
+            '" style="--row:' + (slots.indexOf(x.start) + 1) + ";--span:" + span + '">' +
+            '<p class="s-meta"><span class="s-time"><time datetime="' + t.start.toISOString() + '">' + esc(t.label) + "</time></span>" +
+              (tr ? '<span class="s-track"><span class="tn">' + pad(k) + "</span> " + esc(tr.name) + "</span>" : "") + "</p>" +
             '<div class="s-body"><h3 class="s-title">' + esc(x.title) + "</h3>" +
               (spk ? '<p class="s-speakers">' + spk + "</p>" : "") +
               (x.detail ? '<p class="s-detail">' + copy(x.detail) + "</p>" : "") + "</div>" +
-            (tr ? '<span class="s-track">' + esc(tr.name) + "</span>" : "") +
           "</li>";
         }).join("") + "</ol>" +
         '<button type="button" class="btn btn-small ics-btn" data-ics-day="' + day.id + '">Add ' + esc(day.label) + " to calendar</button>" +
       "</div>";
     }).join("");
-    return sectionShell("schedule", s.heading, (s.note ? '<p class="note">' + copy(s.note) + "</p>" : "") + tzBar + legend + tabs + panels);
+    return sectionShell("schedule", s.heading, (s.note ? '<p class="note">' + copy(s.note) + "</p>" : "") + tzBar + tabs + legend + panels);
   };
 
   function rowPreviewItems(row) {
@@ -238,7 +280,7 @@
     var nums = t.tiers.map(function (x) { return priceNum(x.price); });
     var perDay = nums.every(function (n, i) { return n !== null && t.tiers[i].days; })
       ? '<tfoot><tr><th scope="row">Cost per day</th>' + t.tiers.map(function (tier, i) {
-          return '<td class="c-' + tier.id + '" data-tier="' + esc(tier.name) + '">$' + Math.round(nums[i] / tier.days) + "</td>";
+          return '<td class="c-' + tier.id + '" data-tier="' + esc(tier.name) + '">$' + Math.round(nums[i] / tier.days).toLocaleString("en-US") + "</td>";
         }).join("") + "</tr></tfoot>" : "";
     var table = '<table class="matrix" id="matrix" style="--tiers:' + t.tiers.length + '"><caption class="sr">What each ticket includes</caption>' + head + "<tbody>" + body + "</tbody>" + perDay + "</table>";
     var preview = '<aside class="preview" id="preview" aria-live="polite" aria-label="Row preview"><p class="pv-empty">Hover or focus a row to see exactly what it covers.</p></aside>';
@@ -252,7 +294,7 @@
   R.sponsors = function () {
     var s = D.sponsors;
     return sectionShell("sponsors", s.heading, s.tiers.map(function (tier, i) {
-      return '<div class="sponsor-tier' + (i === 0 ? " is-top" : "") + '"><h3 class="tier-name">' + esc(tier.name) + '</h3><ul class="sponsor-list">' +
+      return '<div class="sponsor-tier tier-' + (i + 1) + (i === 0 ? " is-top" : "") + '"><h3 class="tier-name">' + esc(tier.name) + '</h3><ul class="sponsor-list">' +
         tier.items.map(function (x) {
           var inner = x.logo ? '<img src="' + esc(x.logo) + '" alt="' + esc(x.name) + '" loading="lazy">' : '<span class="wordmark">' + esc(x.name) + "</span>";
           return "<li>" + (x.link ? '<a href="' + esc(x.link) + '">' + inner + "</a>" : inner) + "</li>";
@@ -409,6 +451,7 @@
         }).join("") + '<button type="button" class="btn btn-small" id="reg-again">Register someone else</button></div>' +
       "</div>";
     $("reg-confirm").focus();
+    markSeat();
     $("reg-again").addEventListener("click", function () {
       var sec = $("register");
       sec.outerHTML = R.register();
@@ -473,7 +516,7 @@
     }).join("");
     var hasTickets = on.some(function (s) { return s.id === "tickets"; });
     $("header-cta").setAttribute("href", hasTickets ? "#tickets" : "#register");
-    $("header-cta").textContent = hasTickets ? "Tickets" : "Register";
+    $("header-cta").textContent = "Register";
     $("sections").innerHTML = on.map(function (s) { return R[s.id](); }).join("");
     $("footer").innerHTML = '<div class="wrap footer-inner"><p class="footer-word" aria-hidden="true">' + esc(m.name) + "</p>" +
       '<nav aria-label="Footer"><ul class="footer-links">' + on.map(function (s) { return '<li><a href="#' + s.id + '">' + esc(s.label) + "</a></li>"; }).join("") + "</ul></nav>" +
@@ -493,6 +536,7 @@
     .then(function (data) {
       D = data;
       renderHero();
+      renderSeats();
       renderChrome();
       wireTabs(); wireMatrix(); wireForm(); wireGlobal();
       if (location.hash.length > 1) {

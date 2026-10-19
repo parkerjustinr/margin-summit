@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Event</title>
   <meta name="description" content="">
-  <!-- FONTS: swap these two families in the design pass. Keep one display face + one body face. -->
+  <!-- FONTS: one neo-grotesk for everything, one mono for times and numbers. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,12 +18,12 @@
   <header class="site-header">
     <a class="brand" href="#top" id="brand"></a>
     <nav aria-label="Sections"><ul class="nav-list" id="nav"></ul></nav>
-    <a class="btn btn-primary btn-small header-cta" href="#tickets" id="header-cta">Tickets</a>
+    <a class="btn btn-primary btn-small header-cta" href="#tickets" id="header-cta">Register</a>
   </header>
 
   <main id="main" tabindex="-1">
     <section class="hero" id="top" aria-labelledby="hero-title">
-      <!-- HERO MOMENT: the one "slightly too much" element goes in #hero-moment. -->
+      <!-- HERO MOMENT: 600 seats, one cell each. Rendered by renderSeats() in app.js. -->
       <div class="hero-moment" id="hero-moment" aria-hidden="true"></div>
       <div class="hero-inner" id="hero"></div>
     </section>

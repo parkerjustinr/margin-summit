@@ -141,12 +141,12 @@
     "intro": "Hartwell Hall, a former cold-storage warehouse in Fulton Market.",
     "mapLink": "",
     "items": [
-      {"title": "Address", "body": "W Fulton Market at N Morgan St, Chicago, IL 60607. [PLACEHOLDER] Street number."},
+      {"title": "Address", "body": "W Fulton Market at N Morgan St, Chicago, IL 60607."},
       {"title": "CTA", "body": "Morgan station on the Green and Pink Lines, at Lake and Morgan. One block south. Elevators on both platforms."},
-      {"title": "From O'Hare", "body": "Blue Line to Clark/Lake, then Green or Pink Line west to Morgan. [PLACEHOLDER] About 50 minutes."},
-      {"title": "From Midway", "body": "Orange Line to Clark/Lake, then Green or Pink Line west to Morgan. [PLACEHOLDER] About 40 minutes."},
-      {"title": "Metra", "body": "Ogilvie or Union Station. [PLACEHOLDER] About a 20-minute walk."},
-      {"title": "Parking", "body": "Attended garages at 650 and 832 W Fulton Market. [PLACEHOLDER] Rates and any event discount."}
+      {"title": "From O'Hare", "body": "Blue Line to Clark/Lake, about 40 to 45 minutes, then Green or Pink Line west to Morgan."},
+      {"title": "From Midway", "body": "Orange Line to Clark/Lake, then Green or Pink Line west to Morgan. The Orange Line reaches downtown in 20 to 25 minutes."},
+      {"title": "Metra", "body": "Ogilvie is about a mile on foot, Union Station about a mile and a quarter."},
+      {"title": "Parking", "body": "Garages at 650 and 832 W Fulton Market, both bookable in parking apps."}
     ]
   },
   "registration": {

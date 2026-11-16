@@ -31,7 +31,8 @@
     "primaryCta": {"label": "Register", "href": "#tickets"},
     "secondaryCta": {"label": "See the agenda", "href": "#schedule"},
     "facts": [{"value": "600", "label": "Operations leaders"}, {"value": "3", "label": "Tracks"}],
-    "seatHint": "Pick an open seat to claim it."
+    "seatHint": "Pick an open seat to claim it.",
+    "seatMove": "Pick any open seat to move it."
   },
   "about": {
     "heading": "About",

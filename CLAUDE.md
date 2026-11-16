@@ -11,7 +11,7 @@ One-page event site. Plain HTML, CSS, vanilla JS. No framework, no build step. D
   - Ticket rows with `from` (`day:<id>`, `track:<id>`, `session:<id>`) build their preview from the schedule. Rows without `from` show `detail`.
 - `styles.css` - design tokens at the top of `:root`. Archivo for all text, IBM Plex Mono for times, dates and numbers only. Change tokens first, then section styles.
 - `app.js` - one renderer per section in the `R` object. To add a section: add a renderer `R.<id>`, then add `{ "id": "<id>", "label": "...", "on": true }` to `sections`.
-- `#hero-moment` in `index.html` is reserved for the one big hero element. It holds the seat map: 600 seats in three track blocks of 200 (`renderSeats` in `app.js`). Visitors claim one seat; it shows on the confirmation and in the .ics, or one is assigned at random on submit.
+- `#hero-moment` in `index.html` is reserved for the one big hero element. It holds the seat map: 600 seats in three track blocks of 200 (`renderSeats` in `app.js`). After the fill one seat is claimed by default (`claimDefaultSeat`); visitors can move it. The claimed seat shows on the confirmation and in the .ics.
 
 ## Built-in features (keep them working)
 - Featured speaker plus grid. Speakers link to their sessions and sessions link back, switching the day tab if needed.
@@ -19,6 +19,16 @@ One-page event site. Plain HTML, CSS, vanilla JS. No framework, no build step. D
 - Ticket breakdown matrix: pick a column to choose a ticket, hover or focus a row for a side preview on desktop, tap a row to open it inline on phones. No sideways scroll on phones. Cost-per-day row is computed.
 - Demo registration with validation and a confirmation state. Nothing is sent anywhere.
 - Skip link, visible focus, reduced-motion support.
+
+## Motion tiers
+Every effect belongs to one tier. Add new motion to this list, in its tier, or don't add it.
+1. Plays once, under 5 seconds, for everyone (reduced motion included). No loop, nothing flashes more than 3 times a second.
+   - Hero seat fill: sold seats fill in once on load, about 1.7s (last seat starts at 1.4s, each fade is 320ms). On phones and touchscreens only the block on screen animates.
+2. Has a reduced version. With prefers-reduced-motion: reduce, the change happens instantly instead.
+   - Smooth scrolling for in-page links: jumps instead.
+   - Hover and press feedback (buttons, day tabs, pass columns, open seats, the button arrow nudge): 120 to 320ms fades become instant.
+   - Session highlight after jumping from a speaker: a 300ms fade in and out around a 1.6s hold becomes an instant on and off.
+3. Sustained or repeating, with a visible on/off toggle. None at present; nothing on the page runs continuously.
 
 ## Rules
 - No em dashes anywhere, in code comments or copy. Use a hyphen.

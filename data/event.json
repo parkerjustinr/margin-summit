@@ -47,13 +47,13 @@
     "heading": "Speakers",
     "intro": "",
     "items": [
-      {"id": "sp1", "name": "Renata Okafor", "role": "COO, Halverd Freight", "bio": "Runs 40 cross-dock sites across the Midwest.", "photo": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&crop=faces&q=70", "link": ""},
+      {"id": "sp1", "name": "Renata Adebayo", "role": "COO, Halverd Freight", "bio": "Runs 40 cross-dock sites across the Midwest.", "photo": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&crop=faces&q=70", "link": ""},
       {"id": "sp2", "name": "Tomas Lindqvist", "role": "VP Operations, Northpine Foods", "bio": "Runs six food plants and the fleet between them.", "photo": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&crop=faces&q=70", "link": ""},
       {"id": "sp3", "name": "Priya Raman", "role": "Director of Planning, Corvel Supply", "bio": "Plans inventory for 14,000 medical SKUs.", "photo": "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&crop=faces&q=70", "link": ""},
       {"id": "sp4", "name": "Dana Whitcombe", "role": "Head of People Operations, Tallis Health", "bio": "Staffs round-the-clock teams across 30 clinics.", "photo": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&crop=faces&q=70", "link": ""},
       {"id": "sp5", "name": "Marcus Bell", "role": "VP Fulfillment, Larkspur Home", "bio": "Ships 80,000 orders a day at peak.", "photo": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&crop=faces&q=70", "link": ""},
       {"id": "sp6", "name": "Hana Sato", "role": "Chief Data Officer, Odessen Logistics", "bio": "Leads data for a 900-truck fleet.", "photo": "https://images.unsplash.com/photo-1614644147724-2d4785d69962?auto=format&fit=crop&crop=faces&q=70", "link": ""},
-      {"id": "sp7", "name": "Joel Ferreira", "role": "Plant Director, Ferrow Manufacturing", "bio": "Runs a 400-person plant on three shifts.", "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&crop=faces&q=70", "link": ""}
+      {"id": "sp7", "name": "Joel Ferreira", "role": "Plant Director, Keswick Manufacturing", "bio": "Runs a 400-person plant on three shifts.", "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&crop=faces&q=70", "link": ""}
     ]
   },
   "schedule": {
@@ -76,7 +76,7 @@
           {"id": "s108", "start": "11:00", "end": "11:45", "title": "Replacing spreadsheet planning with a WMS", "track": "systems", "speakers": [], "guests": [{"name": "Grace Liu", "company": "Tolvane Electronics"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s109", "start": "12:30", "end": "13:30", "title": "Lunch", "track": "", "speakers": [], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s110", "start": "13:30", "end": "14:15", "title": "Renegotiating carrier contracts after a rate swing", "track": "supply", "speakers": ["sp2"], "detail": "", "tiers": ["day", "full", "exec"]},
-          {"id": "s111", "start": "13:30", "end": "14:15", "title": "Training new managers in their first 90 days", "track": "people", "speakers": [], "guests": [{"name": "Sam Okonkwo", "company": "Pierce & Haldane Distribution"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s111", "start": "13:30", "end": "14:15", "title": "Training new managers in their first 90 days", "track": "people", "speakers": [], "guests": [{"name": "Kofi Mensah", "company": "Pierce & Haldane Distribution"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s112", "start": "13:30", "end": "14:15", "title": "Choosing what to automate first in a warehouse", "track": "systems", "speakers": [], "guests": [{"name": "Ben Adler", "company": "Kestrow Tools"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s113", "start": "14:45", "end": "15:30", "title": "Panel: Measuring and reducing unplanned downtime", "track": "", "speakers": ["sp2"], "guests": [{"name": "Nadia Haddad", "company": "Vantor Pharma Logistics"}, {"name": "Chris Dubois", "company": "Ashgrove Building Supply"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s114", "start": "18:30", "end": "21:00", "title": "Leaders' dinner", "track": "", "speakers": [], "detail": "Seated dinner with the speakers.", "tiers": ["exec"]}
@@ -92,9 +92,9 @@
           {"id": "s202", "start": "09:00", "end": "09:45", "title": "Morning keynote: Running a plant on five daily metrics", "track": "", "speakers": ["sp7"], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s203", "start": "10:00", "end": "10:45", "title": "Running a monthly S&OP process", "track": "supply", "speakers": [], "guests": [{"name": "Mei Tanaka", "company": "Fairmoor Grocers"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s204", "start": "10:00", "end": "11:30", "title": "Workshop: Map and fix one broken process", "track": "people", "speakers": [], "guests": [{"name": "Tariq Shah", "company": "Oakline Packaging"}], "detail": "Bring a real process. 40 seats.", "tiers": ["full", "exec"]},
-          {"id": "s205", "start": "10:00", "end": "10:45", "title": "Rolling out handheld scanners on the warehouse floor", "track": "systems", "speakers": [], "guests": [{"name": "Luis Ortega", "company": "Calder Couriers"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s205", "start": "10:00", "end": "10:45", "title": "Rolling out handheld scanners on the warehouse floor", "track": "systems", "speakers": [], "guests": [{"name": "Mateo Ortega", "company": "Calder Couriers"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s206", "start": "11:00", "end": "11:45", "title": "Handling returns in high-volume e-commerce fulfillment", "track": "supply", "speakers": ["sp5"], "detail": "", "tiers": ["day", "full", "exec"]},
-          {"id": "s207", "start": "11:00", "end": "11:45", "title": "Writing software RFPs and scoring vendors", "track": "systems", "speakers": [], "guests": [{"name": "Dev Patel", "company": "Holbrook Medical Devices"}], "detail": "", "tiers": ["day", "full", "exec"]},
+          {"id": "s207", "start": "11:00", "end": "11:45", "title": "Writing software RFPs and scoring vendors", "track": "systems", "speakers": [], "guests": [{"name": "Dev Malhotra", "company": "Holbrook Medical Devices"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s208", "start": "12:00", "end": "13:00", "title": "Lunch", "track": "", "speakers": [], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s209", "start": "13:00", "end": "13:45", "title": "Cutting first-year turnover in hourly roles", "track": "people", "speakers": [], "guests": [{"name": "Erin Walsh", "company": "Quarry Hill Foods"}], "detail": "", "tiers": ["day", "full", "exec"]},
           {"id": "s210", "start": "13:00", "end": "13:45", "title": "Reaching 99% inventory accuracy with cycle counts", "track": "supply", "speakers": [], "guests": [{"name": "Ivy Chen", "company": "Strand Apparel"}], "detail": "", "tiers": ["day", "full", "exec"]},

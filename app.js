@@ -74,7 +74,7 @@
         var t = sessionTimes(day, s);
         lines.push("BEGIN:VEVENT", "UID:" + s.id + "-" + D.meta.year + "@margin-summit", "DTSTAMP:" + icsStamp(new Date()),
           "DTSTART:" + icsStamp(t.start), "DTEND:" + icsStamp(t.end), "SUMMARY:" + icsText(D.meta.name + ": " + s.title),
-          "DESCRIPTION:" + icsText([s.detail, seatState.mine ? "Your seat: " + seatLabel(seatState.mine) : ""].filter(Boolean).join("\n")), "LOCATION:" + icsText(loc), "END:VEVENT");
+          "DESCRIPTION:" + icsText([s.detail, seatState.mine != null ? "Your seat: " + seatLabel(seatState.mine) : ""].filter(Boolean).join("\n")), "LOCATION:" + icsText(loc), "END:VEVENT");
       });
     });
     lines.push("END:VCALENDAR");
@@ -124,11 +124,15 @@
 
   // ---------- hero moment: seat map ----------
   // 600 seats in three blocks of 200, one per track. Sold seats fill in once on load (under 2s).
-  // After the fill a visitor can claim one open seat; it goes on the confirmation and into the .ics.
+  // After the fill one seat is claimed by default; the visitor can move it to any open seat.
+  // The claimed seat goes on the confirmation and into the .ics.
   var SEATS = 600, SOLD = 438, PER_BLOCK = 200, BLOCK_COLS = 10, ROWS = 20;
   var seatState = { ready: false, mine: null, active: null, show: 1 };
   function seatId(i) { return (Math.floor(i / PER_BLOCK) + 1) + "-" + (i % PER_BLOCK + 1); }
-  function seatLabel(i) { return "Seat " + seatId(i) + ", Track " + pad(Math.floor(i / PER_BLOCK) + 1); }
+  function seatLabel(i) {
+    var local = i % PER_BLOCK;
+    return "Track " + pad(Math.floor(i / PER_BLOCK) + 1) + ", Row " + (Math.floor(local / BLOCK_COLS) + 1) + ", Seat " + (local % BLOCK_COLS + 1);
+  }
   function seatEl(i) { return $("seat-" + seatId(i)); }
   function seatOpen(i) { var el = seatEl(i); return el && !el.classList.contains("t"); }
   function seatAria(i) {
@@ -161,7 +165,7 @@
       '<p class="seat-status" id="seat-status">' + copy(D.hero.seatHint || "") + "</p>" +
       '<p class="sr" id="seat-live" aria-live="polite"></p></div>';
     requestAnimationFrame(function () { requestAnimationFrame(function () { $("seats").classList.add("is-on"); }); });
-    setTimeout(function () { seatState.ready = true; }, 1800);
+    setTimeout(function () { seatState.ready = true; claimDefaultSeat(); }, 1800);
     wireSeats();
   }
   function showBlock(n) {
@@ -179,6 +183,15 @@
     $("seats").setAttribute("aria-activedescendant", "seat-" + seatId(i));
     showBlock(Math.floor(i / PER_BLOCK) + 1);
   }
+  // Default seat: the most central open seat nearest the front of the middle block. Claimed silently.
+  function claimDefaultSeat() {
+    if (seatState.mine != null) return;
+    var mid = Math.floor(SEATS / PER_BLOCK / 2), order = [4, 5, 3, 6, 2, 7, 1, 8, 0, 9];
+    for (var row = 0; row < ROWS; row++) for (var k = 0; k < order.length; k++) {
+      var i = mid * PER_BLOCK + row * BLOCK_COLS + order[k];
+      if (seatOpen(i)) { claimSeat(i, true); showBlock(mid + 1); return; }
+    }
+  }
   function claimSeat(i, assigned) {
     if (!seatOpen(i)) { $("seat-live").textContent = seatLabel(i) + " is taken."; return; }
     var prev = seatState.mine;
@@ -186,7 +199,7 @@
     if (prev != null) { seatEl(prev).classList.remove("is-you"); seatAria(prev); }
     seatEl(i).classList.add("is-you");
     seatAria(i);
-    $("seat-status").innerHTML = "<strong>" + esc(seatLabel(i)) + "</strong>";
+    $("seat-status").innerHTML = "<strong>" + esc(seatLabel(i)) + "</strong>" + copy(D.hero.seatMove || "");
     if (!assigned) $("seat-live").textContent = seatLabel(i) + " claimed.";
   }
   function randomOpenSeat() {
@@ -217,8 +230,9 @@
     });
     grid.addEventListener("focus", function () {
       if (seatState.active != null) return;
-      var start = seatState.mine != null ? seatState.mine : (seatState.show - 1) * PER_BLOCK;
-      setActive(start);
+      // Start on the claimed seat if its block is on screen; never switch blocks on focus (a click may be landing).
+      var mineShown = seatState.mine != null && Math.floor(seatState.mine / PER_BLOCK) + 1 === seatState.show;
+      setActive(mineShown ? seatState.mine : (seatState.show - 1) * PER_BLOCK);
     });
     grid.addEventListener("keydown", function (e) {
       var i = seatState.active == null ? 0 : seatState.active;
@@ -558,6 +572,7 @@
     $("reg-confirm").focus();
     $("reg-again").addEventListener("click", function () {
       releaseSeatToSold();
+      claimDefaultSeat();
       var sec = $("register");
       sec.outerHTML = R.register();
       wireForm();
